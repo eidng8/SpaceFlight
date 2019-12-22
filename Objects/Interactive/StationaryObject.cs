@@ -9,6 +9,9 @@
 
 namespace eidng8.SpaceFlight.Objects.Interactive
 {
+    /// <summary>
+    /// Base class of all stationary interactive objects.
+    /// </summary>
     public class StationaryObject : InteractiveObject
     {
     }

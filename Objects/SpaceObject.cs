@@ -1,10 +1,28 @@
-﻿using UnityEngine;
+﻿// ---------------------------------------------------------------------------
+// <copyright file="EventChannels.cs" company="eidng8">
+//      GPLv3
+// </copyright>
+// <summary>
+// 
+// </summary>
+// ---------------------------------------------------------------------------
+
+using UnityEngine;
 
 namespace eidng8.SpaceFlight.Objects
 {
+    /// <summary>
+    /// Base class of all space objects. It makes sure all such objects have
+    /// their parameters properly set. Such as gravity, drag, kinematic.
+    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public abstract class SpaceObject : MonoBehaviour
     {
+        /// <summary>
+        /// Reference to the attached <c>Rigidbody</c>. This rigid body's
+        /// gravity and drags are all zero.
+        /// And <c>isKinematic</c> is <c>false</c>.
+        /// </summar>
         protected Rigidbody Body {
             get {
                 if (this._set) {

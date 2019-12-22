@@ -25,9 +25,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
     ///
     /// <para>
     /// This controller doesn't allow setting velocity or acceleration
-    /// directly. Use the <seealso cref="Throttle"/> property to control
-    /// movement acceleration. A <seealso cref="FullThrottle"/> method is
-    /// provided for convenience. Use <seealso cref="FullStop"/> to cut
+    /// directly. Use the <see cref="Throttle"/> property to control
+    /// movement acceleration. A <see cref="FullThrottle"/> method is
+    /// provided for convenience. Use <see cref="FullStop"/> to cut
     /// acceleration to 0 and start decelerating. There is no way to apply
     /// deceleration directly.
     /// </para>
@@ -62,7 +62,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
         /// <summary>
         /// Full throttle acceleration. This is used to speed up the object
-        /// until it reaches <seealso cref="maxSpeed"/>.
+        /// until it reaches <see cref="maxSpeed"/>.
         /// </summary>
         [Tooltip(
             "Full throttle acceleration. This is used to speed up the object"
@@ -88,7 +88,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
         /// <summary>
         /// Between 0 ~ 1, fraction of full throttle.
-        /// The <seealso cref="acceleration"/> is multiplied by <c>Throttle</c>
+        /// The <see cref="acceleration"/> is multiplied by <c>Throttle</c>
         /// during calculation.
         /// </summary>
         public float Throttle {
@@ -126,8 +126,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
 
         /// <summary>
-        /// Sets <seealso cref="Throttle"/> to <c>1</c>,
-        /// and <seealso cref="stopping"/> to <c>false</c>.
+        /// Sets <see cref="Throttle"/> to <c>1</c>,
+        /// and <see cref="stopping"/> to <c>false</c>.
         /// </summary>
         public void FullThrottle()
         {
@@ -136,8 +136,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Sets <seealso cref="Throttle"/> to <c>0</c>,
-        /// and <seealso cref="stopping"/> to <c>true</c>.
+        /// Sets <see cref="Throttle"/> to <c>0</c>,
+        /// and <see cref="stopping"/> to <c>true</c>.
         /// </summary>
         public void FullStop()
         {
@@ -248,6 +248,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             n = Mathf.Sqrt(n);
             float a2 = 2 * a;
 
+            // We first check the positive sign, if it yields a positive
+            // value, there is no need to check the negative part.
             float t = (n - v) / a2;
             if (t > 0) {
                 return t;
@@ -268,6 +270,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             this.Init();
         }
 
+        /// <summary>
+        /// Initialize the instance, allocating a new <see cref="FlightState"/>
+        /// instance with default values.
+        /// </summary>
         protected void Init()
         {
             this.State = new FlightState(
@@ -276,6 +282,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             );
         }
 
+        /// <summary>
+        /// Update <see cref="State"/> information from underlying game object.
+        /// </summary>
         protected void UpdateExistence()
         {
             this.State.Existence =
@@ -283,9 +292,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Calculate the forward thrust of the game object.
-        /// It updates the <c>thrust</c> in <seealso cref="State"/>,
-        /// taking <c>thrustThreshold</c> into account.
+        /// Calculate and apply velocity to game object. It should be called
+        /// in <c>FixedUpdate()</c>. Also updates the <see cref="State"/>.
         ///
         /// <para>
         /// Remember that it is doing actual physics calculation here.
@@ -295,10 +303,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </para>
         /// 
         /// </summary>
-        /// <returns>
-        /// The forward thrust vector, suitable to be passed directly to
-        /// <see cref="UnityEngine.Rigidbody.AddForce(Vector3)"/>
-        /// </returns>
         protected void ApplySpeed()
         {
             if (this.stopping) {
@@ -309,10 +313,14 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             this.Accelerate();
         }
 
+        /// <summary>
+        /// Accelerates the object according to current
+        /// <see cref="Throttle"/>. Also updates the <see cref="State"/>.
+        /// </summary>
         protected void Accelerate()
         {
             float throttle = Mathf.Clamp(this.Throttle, 0, 1);
-            this.Vc += throttle * this.acceleration * Time.deltaTime;
+            this.Vc += throttle * this.acceleration * Time.fixedDeltaTime;
             this.Vc = Mathf.Clamp(this.Vc, 0, this.maxSpeed);
 
             Motion mo = this.State.Motion;
@@ -328,6 +336,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 : this.Vc * this.transform.forward;
         }
 
+        /// <summary>
+        /// Decelerates the object until fully stopped. Also updates the
+        /// <see cref="State"/>.
+        /// </summary>
         protected void Decelerate()
         {
             Motion mo = this.State.Motion;
@@ -336,7 +348,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 return;
             }
 
-            this.Vc -= this.deceleration * Time.deltaTime;
+            this.Vc -= this.deceleration * Time.fixedDeltaTime;
             this.Vc = Mathf.Clamp(this.Vc, 0, this.maxSpeed);
             mo.Speed = this.Vc;
             this.State.Motion = mo;
@@ -345,7 +357,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 : this.Vc * this.transform.forward;
         }
 
-
+        /// <summary>
+        /// Actually makes the turn. Also updates the
+        /// <see cref="State"/>.
+        /// </summary>
         protected void ApplyTurn()
         {
             Vector3 dir = this.Bearing;

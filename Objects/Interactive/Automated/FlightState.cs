@@ -12,9 +12,11 @@ using eidng8.SpaceFlight.States;
 using Motion = eidng8.SpaceFlight.States.Motion;
 
 
-
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
+    /// <summary>
+    /// In flight state data.
+    /// </summary>
     public class FlightState : StateObject
     {
         public Existence Existence { get; set; }
