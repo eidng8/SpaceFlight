@@ -12,7 +12,7 @@ using UnityEngine;
 namespace eidng8.SpaceFlight.States
 {
     /// <summary>
-    /// State of existence
+    /// Properties of objects in physical world. Such as mass, locatioon, etc.
     /// </summary>
     public struct Existence
     {
@@ -20,8 +20,8 @@ namespace eidng8.SpaceFlight.States
 
         /// <summary>
         /// It is for ease of use in Unity, that this field is declared in
-        /// `Transform` type. It shall be serialized into three 3D vectors
-        /// of position, rotation, and scale, for network transmission.
+        /// <see cref="Transform" type. It shall be serialized into three 3D
+        // vectors of position, rotation, and scale, for network transmission.
         /// </summary>
         public Transform Transform;
 
