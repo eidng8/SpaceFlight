@@ -115,6 +115,26 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             // Remember to take safe distance into account.
             float d = this.TargetDistance() - this.safeDistance;
 
+            // Why:
+            // => vt=D
+            // => at²=D
+            // Meaning if we keep current speed `v` or use the acceleration `a`
+            // we can cover the distance `D` in the same period of time.
+            // So if we just combine both cases, we can express something like:
+            // => at² + vt= 2D
+            // We just replace `2D` with a lettre `d`. It doesn't mean that `d`
+            // is same as `2D`. It's just that the distance we are discussing
+            // is not important. So it doesn't matter what letter we use. To
+            // denote that "some distance, or same distance" is traversed.
+            // Deceleration is same as acceleration applied in reverse.
+            // With accleration point of view, the above means that we
+            // keep accelerating the object in time `t`, and then keep the
+            // terminal speed and travel `t` more time. Covered disntance `d`.
+            // Reverse the acceleration to deceleration. Then it means at speed
+            // `v` we've traveled a part of distance `d` in time `t`, then
+            // decelerate in time `t`, and eventualy arrived at our goal.
+            // Can you see when we start decelerating now? Yes, right in the
+            // middle.
             return v * t / 2 >= d;
         }
 
