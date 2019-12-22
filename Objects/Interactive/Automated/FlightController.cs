@@ -248,6 +248,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             n = Mathf.Sqrt(n);
             float a2 = 2 * a;
 
+            // We first check the positive sign, if it yields a positive
+            // value, there is no need to check the negative part.
             float t = (n - v) / a2;
             if (t > 0) {
                 return t;
@@ -268,6 +270,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             this.Init();
         }
 
+        /// <summary>
+        /// Initialize the instance, allocating a new <see cref="FlightState"/>
+        /// instance with default values.
+        /// </summary>
         protected void Init()
         {
             this.State = new FlightState(
@@ -276,6 +282,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             );
         }
 
+        /// <summary>
+        /// Update state information from underlying game object.
+        /// </summary>
         protected void UpdateExistence()
         {
             this.State.Existence =
@@ -283,9 +292,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Calculate the forward thrust of the game object.
-        /// It updates the <c>thrust</c> in <seealso cref="State"/>,
-        /// taking <c>thrustThreshold</c> into account.
+        /// Calculate and apply velocity to game object. It should be called
+        /// in <c>FixedUpdate()</c>.
         ///
         /// <para>
         /// Remember that it is doing actual physics calculation here.
@@ -295,10 +303,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </para>
         /// 
         /// </summary>
-        /// <returns>
-        /// The forward thrust vector, suitable to be passed directly to
-        /// <see cref="UnityEngine.Rigidbody.AddForce(Vector3)"/>
-        /// </returns>
         protected void ApplySpeed()
         {
             if (this.stopping) {
@@ -309,10 +313,14 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             this.Accelerate();
         }
 
+        /// <summary>
+        /// Accelerates the object according to current
+        /// <seealso cref="Throttle"/>.
+        /// </summary>
         protected void Accelerate()
         {
             float throttle = Mathf.Clamp(this.Throttle, 0, 1);
-            this.Vc += throttle * this.acceleration * Time.deltaTime;
+            this.Vc += throttle * this.acceleration * Time.fixedDeltaTime;
             this.Vc = Mathf.Clamp(this.Vc, 0, this.maxSpeed);
 
             Motion mo = this.State.Motion;
@@ -328,6 +336,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 : this.Vc * this.transform.forward;
         }
 
+        /// <summary>
+        /// Decelerates the object until fully stopped.
+        /// </summary>
         protected void Decelerate()
         {
             Motion mo = this.State.Motion;
@@ -336,7 +347,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 return;
             }
 
-            this.Vc -= this.deceleration * Time.deltaTime;
+            this.Vc -= this.deceleration * Time.fixedDeltaTime;
             this.Vc = Mathf.Clamp(this.Vc, 0, this.maxSpeed);
             mo.Speed = this.Vc;
             this.State.Motion = mo;
@@ -344,7 +355,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 ? Vector3.zero
                 : this.Vc * this.transform.forward;
         }
-
 
         protected void ApplyTurn()
         {
