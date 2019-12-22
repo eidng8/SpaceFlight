@@ -125,12 +125,20 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         protected bool stopping;
 
 
+        /// <summary>
+        /// Sets <seealso cref="Throttle"/> to <c>1</c>,
+        /// and <seealso cref="stopping"/> to <c>false</c>.
+        /// </summary>
         public void FullThrottle()
         {
             this._throttle = 1;
             this.stopping = false;
         }
 
+        /// <summary>
+        /// Sets <seealso cref="Throttle"/> to <c>0</c>,
+        /// and <seealso cref="stopping"/> to <c>true</c>.
+        /// </summary>
         public void FullStop()
         {
             this._throttle = 0;
@@ -142,57 +150,67 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         /// 
         /// <remarks>
-        /// https://www.math10.com/en/algebra/formulas-for-short-multiplication.html
-        /// https://opentextbc.ca/physicstestbook2/chapter/motion-equations-for-constant-acceleration-in-one-dimension/
-        /// Ah! Back to physics & maths. The above two links provide
+        /// <a href="https://www.math10.com/en/algebra/formulas-for-short-multiplication.html">Polynomial Identities</a>
+        /// and
+        /// <a href="https://opentextbc.ca/physicstestbook2/chapter/motion-equations-for-constant-acceleration-in-one-dimension/">Motion</a>.
+        /// 
+        /// Ah! Back to physics and maths. The two links provide
         /// lectures needed for this calculation.
         /// Here we have to find out the time needed to cover the distance.
         /// We use the formula with initial speed and constant acceleration:
-        /// d=vt+at². The formula is transformed as following:
+        /// <c>d=vt+at²</c>. The formula is then transformed as following:
         ///
+        /// <code>
         /// => at² + vt = d
         /// 
-        /// * Both side divide by a
+        /// * Both side divide by `a`
         ///          v      d
         /// => t² + ---t = ---
         ///          a      a
         /// 
         /// * We add the same "thing" to both side of the formula, to make
         /// * it a quadratic formula, so we can use Polynomial Identities.
-        /// * Which reads (x + y)² = x² + 2xy + y²
+        /// * Which reads <c>(x + y)² = x² + 2xy + y²</c>
         /// * The tricky bit here is to find that "thing".
         ///
         ///          v       v       d      v
         /// => t² + ───t + (───)² = ─── + (───)²
         ///          a      2a       a     2a
         ///
+        ///              ^^^^^^^^       ^^^^^^^^
+        /// 
         /// * Now we also need to simplify the right side a bit too.
-        /// * Multiplying same "thing" to both numerator & denominator
+        /// * Multiplying same "thing" to both numerator and denominator
         /// * won't change the faction.
         ///
         ///          v       v       4ad     v
         /// => t² + ───t + (───)²  = ─── + (───)²
         ///          a      2a       4a²    2a
-        ///       
+        ///                          ^^^
+        ///                          ×`4a`
+        ///
+        /// * Polynomial Identities to the left, and simplified the right
+        /// 
         ///          v      4ad + v²
         /// => (t + ───)² = ────────
         ///         2a         4a²
-        ///      ___________      ___________
-        ///     /      v         / 4ad + v²
-        /// => / (t + ───)² = ± /  ────────
-        ///   √       2a       √      4a²
+        ///
+        /// * Square root both sides, remember the `±` sign.
         ///                 __________
         ///         v    ± √ 4ad + v²
         /// => t + ─── = ─────────────
         ///        2a         2a
+        /// 
         ///           __________
         ///        ± √ 4ad + v²     v
         /// => t = ───────────── − ───
         ///             2a         2a
+        /// 
         ///           __________
         ///        ± √ 4ad + v²  − v
         /// => t = ─────────────────
         ///               2a
+        /// </code>
         /// </remarks>
         /// 
         /// <param name="distance">
@@ -203,8 +221,11 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// Otherwise use acceleration.
         /// </param>
         /// <returns>
-        /// The estimated time of arrival. The actual unit is not crucial in
-        /// most circumstances. One could think it were in seconds.
+        /// The estimated time of arrival. In case of deceleration,
+        /// <c>float.PositiveInfinity</c> may be returned if it couldn't
+        /// reach the target.
+        /// The actual unit is not crucial in most circumstances.
+        /// One could think it were in seconds.
         /// </returns>
         public float EstimatedArrival(float distance, bool dec = false)
         {
