@@ -7,6 +7,8 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using System.Collections.Generic;
+using eidng8.SpaceFlight.Objects.Dynamic.Motors;
 using eidng8.SpaceFlight.States;
 using UnityEngine;
 using Motion = eidng8.SpaceFlight.States.Motion;
@@ -82,7 +84,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         public float deceleration = 200;
 
         /// <summary>
-        /// Current forward velocity. <c>Vc</c> stands for Velocity current.
+        /// Current forward velocity. <c>Vc</c> stands for Thrust current.
         /// With the small <c>c</c> as subscript.
         /// </summary>
         public float Vc { get; private set; }
@@ -93,11 +95,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// during calculation.
         /// </summary>
         public float Throttle {
-            get => this._throttle;
-            set => this._throttle = Mathf.Clamp(value, 0, 1);
+            get => this.Motor.Throttle;
+            set => this.Motor.Throttle = value;
         }
-
-        private float _throttle;
 
         /// <summary>
         /// The direction of facing.
@@ -120,10 +120,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
         private FlightState _state;
 
-        /// <summary>
-        /// Whether it is slowing down.
-        /// </summary>
-        protected bool Stopping;
+        protected AccelerationMotor Motor;
 
 
         /// <summary>
@@ -132,8 +129,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         public void FullThrottle()
         {
-            this._throttle = 1;
-            this.Stopping = false;
+            this.Motor.FullThrottle();
         }
 
         /// <summary>
@@ -142,8 +138,15 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         public void FullStop()
         {
-            this._throttle = 0;
-            this.Stopping = true;
+            this.Motor.FullStop();
+        }
+
+        /// <summary>
+        /// Sets <see cref="Throttle"/> to <c>0</c>,
+        /// </summary>
+        public void FullReverse()
+        {
+            this.Motor.FullReverse();
         }
 
         /// <summary>
@@ -284,6 +287,19 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             return (-n - v) / a2;
         }
 
+        protected void OnEnable()
+        {
+            Dictionary<int, object> config = new Dictionary<int, object>() {
+                [(int)AccelerationMotorAttributes.MaxTurn] = this.maxTurn,
+                [(int)AccelerationMotorAttributes.MaxSpeed] = this.maxSpeed,
+                [(int)AccelerationMotorAttributes.MaxAcceleration] =
+                    this.acceleration,
+                [(int)AccelerationMotorAttributes.MaxDeceleration] =
+                    this.deceleration,
+            };
+            this.Motor = new AccelerationMotor(config);
+        }
+
         protected void FixedUpdate()
         {
             this.UpdateExistence();
@@ -331,56 +347,25 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         protected void ApplySpeed()
         {
-            if (this.Stopping) {
-                this.Decelerate();
-                return;
-            }
+//            if (this.Stopping) {
+//                this.Motor.FullReverse();
+//            } else {
+//                this.FullThrottle();
+//            }
 
-            this.Accelerate();
-        }
-
-        /// <summary>
-        /// Accelerates the object according to current
-        /// <see cref="Throttle"/>. Also updates the <see cref="State"/>.
-        /// </summary>
-        protected void Accelerate()
-        {
-            float throttle = Mathf.Clamp(this.Throttle, 0, 1);
-            this.Vc += throttle * this.acceleration * Time.fixedDeltaTime;
-            this.Vc = Mathf.Clamp(this.Vc, 0, this.maxSpeed);
-
+            this.Vc = this.Motor.GetVelocity(Time.fixedDeltaTime);
             Motion mo = this.State.Motion;
             if (mo.Speed.Equals(this.Vc)) {
                 return;
             }
 
-            mo.Speed =
-                this.Vc;
-            this.State.Motion = mo;
-            this.Body.velocity = this.Vc.Equals(0)
-                ? Vector3.zero
-                : this.Vc * this.transform.forward;
-        }
-
-        /// <summary>
-        /// Decelerates the object until fully stopped. Also updates the
-        /// <see cref="State"/>.
-        /// </summary>
-        protected void Decelerate()
-        {
-            Motion mo = this.State.Motion;
-            if (mo.Speed < 0.001) {
-                mo.Speed = 0;
-                return;
-            }
-
-            this.Vc -= this.deceleration * Time.fixedDeltaTime;
-            this.Vc = Mathf.Clamp(this.Vc, 0, this.maxSpeed);
             mo.Speed = this.Vc;
             this.State.Motion = mo;
-            this.Body.velocity = this.Vc < 0.001
-                ? Vector3.zero
-                : this.Vc * this.transform.forward;
+            this.Body.velocity = this.Vc * this.transform.forward;
+
+            if (this.Vc.Equals(0)) {
+                this.FullStop();
+            }
         }
 
         /// <summary>
@@ -400,7 +385,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             Quaternion bearing = Quaternion.Lerp(
                 this.transform.rotation,
                 to,
-                this.State.Motion.TurnMax * Time.deltaTime
+                this.Motor.GetRoll(Time.fixedDeltaTime)
             );
 
             this.transform.rotation = bearing;

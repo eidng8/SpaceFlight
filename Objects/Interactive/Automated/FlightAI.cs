@@ -80,7 +80,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             }
 
             if (Input.GetKeyDown(KeyCode.S)) {
-                this.Control.FullStop();
+                this.Control.FullReverse();
                 Debug.Log("Backward thrust applied.");
             }
         }
@@ -153,7 +153,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
             // We've arrived at a distance that needs to slow down.
             if (this.ShouldBrake()) {
-                this.Control.FullStop();
+                this.Control.FullReverse();
                 return;
             }
 
