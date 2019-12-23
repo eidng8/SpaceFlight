@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 using eidng8.SpaceFlight.Events;
 
 
+
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
     /// <summary>
@@ -28,12 +29,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         public float safeDistance = 5;
 
         /// <summary>
-        /// Reference to the attached <see cref="FlightController"/>.
+        /// Reference to the selected target object.
         /// </summary>
-        /// <todo>
-        /// Change to lazy-init property.
-        /// </todo>
-        protected FlightController _control;
+        public Transform Target { get; set; }
 
         /// <summary>
         /// Whether a target has been chosen.
@@ -44,66 +42,62 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// is an expensive operation. So we use this field to track the
         /// status of target selection.
         /// </remarks>
-        protected bool _hasTarget = false;
+        public bool HasTarget { get; private set; }
 
         /// <summary>
-        /// Tracks whether the object should be moving.
+        /// Reference to the attached <see cref="FlightController"/>.
         /// </summary>
-        protected bool _shouldMove = false;
+        protected FlightController Control {
+            get {
+                if (!this._controlAttached) {
+                    this._control = this.GetComponent<FlightController>();
+                }
 
-        /// <summary>
-        /// Reference to the selected target object.
-        /// </sumary>
-        public Transform Target { get; set; }
-
-        /// <summary>
-        /// Whether a target has been chosen.
-        /// </summary>
-        public bool HasTarget => this._hasTarget;
-
-        protected void Start() {
-            this._control = this.GetComponent<FlightController>();
+                return this._control;
+            }
+            set {
+                this._control = value;
+                this._controlAttached = true;
+            }
         }
 
-        protected void Awake() {
-            EventManager.Mgr.OnUserEvent(UserEvents.Select,
-                this.OnSelectTarget);
+        private FlightController _control;
+        private bool _controlAttached;
+
+        protected void Awake()
+        {
+            EventManager.Mgr.OnUserEvent(
+                UserEvents.Select,
+                this.OnSelectTarget
+            );
         }
 
-        protected void Update() {
+        protected void Update()
+        {
             if (Input.GetKeyDown(KeyCode.W)) {
-                this._control.FullThrottle();
+                this.Control.FullThrottle();
                 Debug.Log("Forward thrust applied.");
             }
 
             if (Input.GetKeyDown(KeyCode.S)) {
-                this._control.FullStop();
+                this.Control.FullStop();
                 Debug.Log("Backward thrust applied.");
             }
         }
 
-        protected void FixedUpdate() {
+        protected void FixedUpdate()
+        {
             this.TurnToTarget();
             this.DetermineThrottle();
-        }
-
-        /// <summary>
-        /// Distance to target.
-        /// </summary>
-        /// <todo>
-        /// Create a distance method in FlightController, and call that method.
-        /// </todo>
-        protected float TargetDistance() {
-            return Vector3.Distance(this.transform.position,
-                this.Target.position);
         }
 
         /// <summary>
         /// Determines whether the object should start slowing down in order
         /// to stop closet the target position.
         /// </summary>
-        protected bool ShouldBrake() {
-            FlightController control = this._control;
+        protected bool ShouldBrake()
+        {
+            FlightController control = this.Control;
             float v = control.Vc;
             float a = control.deceleration;
 
@@ -113,7 +107,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             float t = v / a;
 
             // Remember to take safe distance into account.
-            float d = this.TargetDistance() - this.safeDistance;
+            float d = control.DistanceTo(this.Target.position)
+                      - this.safeDistance;
 
             // Why:
             // => vt=D
@@ -122,17 +117,17 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             // we can cover the distance `D` in the same period of time.
             // So if we just combine both cases, we can express something like:
             // => at² + vt= 2D
-            // We just replace `2D` with a lettre `d`. It doesn't mean that `d`
+            // We just replace `2D` with a letter `d`. It doesn't mean that `d`
             // is same as `2D`. It's just that the distance we are discussing
-            // is not important. So it doesn't matter what letter we use. To
-            // denote that "some distance, or same distance" is traversed.
+            // is not important. So it doesn't matter what letter we use to
+            // denote that "some distance or same distance" is traversed.
             // Deceleration is same as acceleration applied in reverse.
-            // With accleration point of view, the above means that we
+            // From acceleration point of view, the above means that we
             // keep accelerating the object in time `t`, and then keep the
-            // terminal speed and travel `t` more time. Covered disntance `d`.
+            // terminal speed and travel `t` more time, cover distance `d`.
             // Reverse the acceleration to deceleration. Then it means at speed
             // `v` we've traveled a part of distance `d` in time `t`, then
-            // decelerate in time `t`, and eventualy arrived at our goal.
+            // decelerate in time `t`, and eventually arrived at our goal.
             // Can you see when we start decelerating now? Yes, right in the
             // middle.
             return v * t / 2 >= d;
@@ -141,33 +136,35 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <summary>
         /// Determine acceleration throttle.
         /// </summary>
-        protected void DetermineThrottle() {
-            if (!this._hasTarget || !this._shouldMove) {
+        protected void DetermineThrottle()
+        {
+            if (!this.HasTarget) {
                 return;
             }
 
             // If we start accelerating while facing away from the target,
             // we'll make a bit of roundabout. So we don't do this.
             if (!this.IsFacingTarget()) {
-                this._control.FullStop();
+                this.Control.FullStop();
                 return;
             }
 
             // We've arrived at a distance that needs to slow down.
             if (this.ShouldBrake()) {
-                this._control.FullStop();
+                this.Control.FullStop();
                 return;
             }
 
             // Always use full throttle.
-            this._control.FullThrottle();
+            this.Control.FullThrottle();
         }
 
         /// <summary>
         /// Determine if we are facing the target. Facing doesn't mean we are
         /// directly facing it, we can have around ±45º buffer.
         /// </summary>
-        protected bool IsFacingTarget() {
+        protected bool IsFacingTarget()
+        {
             Transform me = this.transform;
             Vector3 dir = this.Target.position - me.position;
             float ang = Vector3.Angle(dir, me.forward);
@@ -177,23 +174,24 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <summary>
         /// Tells <see cref="FlightController"/> to face target.
         /// </summary>
-        protected void TurnToTarget() {
-            if (!this._hasTarget) {
+        protected void TurnToTarget()
+        {
+            if (!this.HasTarget) {
                 return;
             }
 
             Vector3 dir = this.Target.position - this.transform.position;
-            this._control.Bearing=dir;
+            this.Control.Bearing = dir;
         }
 
         /// <summary>
         /// The objected selected event handler. Sets <see cref="Target"/> to
         /// the selected object.
         /// </summary>
-        protected void OnSelectTarget(ExtendedEventArgs arg0) {
+        protected void OnSelectTarget(ExtendedEventArgs arg0)
+        {
             this.Target = arg0.Source.transform;
-            this._hasTarget = true;
-            this._shouldMove = true;
+            this.HasTarget = true;
         }
     }
 }

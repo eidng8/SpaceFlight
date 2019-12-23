@@ -12,6 +12,7 @@ using UnityEngine;
 using Motion = eidng8.SpaceFlight.States.Motion;
 
 
+
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
     /// <summary>
@@ -122,28 +123,36 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <summary>
         /// Whether it is slowing down.
         /// </summary>
-        protected bool stopping;
+        protected bool Stopping;
 
 
         /// <summary>
         /// Sets <see cref="Throttle"/> to <c>1</c>,
-        /// and <see cref="stopping"/> to <c>false</c>.
+        /// and <see cref="Stopping"/> to <c>false</c>.
         /// </summary>
         public void FullThrottle()
         {
             this._throttle = 1;
-            this.stopping = false;
+            this.Stopping = false;
         }
 
         /// <summary>
         /// Sets <see cref="Throttle"/> to <c>0</c>,
-        /// and <see cref="stopping"/> to <c>true</c>.
+        /// and <see cref="Stopping"/> to <c>true</c>.
         /// </summary>
         public void FullStop()
         {
             this._throttle = 0;
-            this.stopping = true;
+            this.Stopping = true;
         }
+
+        /// <summary>
+        /// Calculates the distance to the specified target position.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public float DistanceTo(Vector3 target) =>
+            Vector3.Distance(this.transform.position, target);
 
         /// <summary>
         /// Estimates the arrival time according to current velocity and acceleration.
@@ -305,7 +314,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         protected void ApplySpeed()
         {
-            if (this.stopping) {
+            if (this.Stopping) {
                 this.Decelerate();
                 return;
             }
