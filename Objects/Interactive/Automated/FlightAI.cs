@@ -114,7 +114,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             // => vt=D
             // => at²=D
             // Meaning if we keep current speed `v` or use the acceleration `a`
-            // we can cover the distance `D` in the same period of time.
+            // we can cover the distance `D` in the same period of time `t`.
             // So if we just combine both cases, we can express something like:
             // => at² + vt= 2D
             // We just replace `2D` with a letter `d`. It doesn't mean that `d`
@@ -124,10 +124,12 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             // Deceleration is same as acceleration applied in reverse.
             // From acceleration point of view, the above means that we
             // keep accelerating the object in time `t`, and then keep the
-            // terminal speed and travel `t` more time, cover distance `d`.
+            // terminal speed and traveling `t` time more. We end up cover
+            // total distance `d`.
             // Reverse the acceleration to deceleration. Then it means at speed
             // `v` we've traveled a part of distance `d` in time `t`, then
-            // decelerate in time `t`, and eventually arrived at our goal.
+            // decelerate in time `t`, and eventually arrived at the full
+            // distance `d`.
             // Can you see when we start decelerating now? Yes, right in the
             // middle.
             return v * t / 2 >= d;
@@ -163,13 +165,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// Determine if we are facing the target. Facing doesn't mean we are
         /// directly facing it, we can have around ±45º buffer.
         /// </summary>
-        protected bool IsFacingTarget()
-        {
-            Transform me = this.transform;
-            Vector3 dir = this.Target.position - me.position;
-            float ang = Vector3.Angle(dir, me.forward);
-            return ang >= -45 && ang <= 45 || ang >= 315;
-        }
+        protected bool IsFacingTarget() =>
+            this.Control.IsFacing(this.Target.position);
 
         /// <summary>
         /// Tells <see cref="FlightController"/> to face target.

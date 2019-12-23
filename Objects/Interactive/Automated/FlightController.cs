@@ -52,13 +52,13 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <summary>
         /// Maximum forward velocity.
         /// </summary>
-        [Tooltip("Maximum forward velocity.")]
+        [Tooltip("Maximum forward velocity."), Range(0, 300000)]
         public float maxSpeed = 200;
 
         /// <summary>
         /// Determines how quickly can the object turn on its sides.
         /// </summary>
-        [Tooltip("Determines how quickly can the object turn.")]
+        [Tooltip("Determines how quickly can the object turn."), Range(0, 360)]
         public float maxTurn = 10;
 
         /// <summary>
@@ -153,6 +153,23 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <returns></returns>
         public float DistanceTo(Vector3 target) =>
             Vector3.Distance(this.transform.position, target);
+
+        /// <summary>
+        /// Determine if we are facing the target. Facing doesn't mean we are
+        /// directly facing it, we can have around ±45º buffer.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
+        public bool IsFacing(Vector3 target, float tolerance = 45)
+        {
+            Transform me = this.transform;
+            Vector3 dir = target - me.position;
+            float ang = Vector3.Angle(dir, me.forward);
+            tolerance = Mathf.Clamp(tolerance, 0, 360);
+            return ang >= -tolerance && ang <= tolerance
+                   || ang >= 360 - tolerance;
+        }
 
         /// <summary>
         /// Estimates the arrival time according to current velocity and acceleration.
