@@ -19,36 +19,36 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         private float _throttle;
 
         /// <inheritdoc />
-        public float Throttle {
-            get => this._throttle;
-            set => this._throttle = Mathf.Clamp(value, -1, 1);
-        }
-
-        /// <inheritdoc />
-        public void FullThrottle() => this._throttle = 1;
-
-        /// <inheritdoc />
-        public void FullStop() => this._throttle = 0;
-
-        /// <inheritdoc />
-        public void FullReverse() => this._throttle = -1;
-
-        /// <inheritdoc />
         public abstract float Acceleration { get; }
 
         /// <inheritdoc />
         public abstract Vector3 Bearing { get; set; }
 
         /// <inheritdoc />
+        public float Throttle {
+            get => _throttle;
+            set => _throttle = Mathf.Clamp(value, -1, 1);
+        }
+
+        /// <inheritdoc />
         public abstract void Configure(Dictionary<int, object> config);
 
         /// <inheritdoc />
-        public abstract void TurnTo(Vector3 target);
+        public void FullReverse() => _throttle = -1;
 
         /// <inheritdoc />
-        public abstract float GetThrust(float deltaTime);
+        public void FullStop() => _throttle = 0;
+
+        /// <inheritdoc />
+        public void FullThrottle() => _throttle = 1;
 
         /// <inheritdoc />
         public abstract float GetRoll(float deltaTime);
+
+        /// <inheritdoc />
+        public abstract float GetThrust();
+
+        /// <inheritdoc />
+        public abstract void TurnTo(Vector3 target);
     }
 }
