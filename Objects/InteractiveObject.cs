@@ -7,11 +7,8 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-namespace eidng8.SpaceFlight.Objects {
-    /// <summary>
-    /// Base class of all space objects that can be interacted with.
-    /// </summary>
-    public class InteractiveObject : SpaceObject
-    {
-    }
+namespace eidng8.SpaceFlight.Objects
+{
+    /// <summary>Base class of all space objects that can be interacted with.</summary>
+    public abstract class InteractiveObject : SpaceObject { }
 }

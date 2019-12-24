@@ -18,7 +18,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
     /// systems installed. Propulsion systems are represented by concrete classes of
     /// the <see cref="eidng8.SpaceFlight.Objects.Dynamic.IMotor" /> interface.
     /// </summary>
-    public interface IFlightController
+    public interface IFlightController : IObjectController
     {
         /// <summary>Returns the current acceleration value.</summary>
         float Acceleration { get; }

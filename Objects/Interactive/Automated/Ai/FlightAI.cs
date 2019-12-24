@@ -11,7 +11,7 @@ using eidng8.SpaceFlight.Events;
 using UnityEngine;
 
 
-namespace eidng8.SpaceFlight.Objects.Interactive.Automated
+namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 {
     /// <summary>
     /// In flight logic. Tells <see cref="AccelerationController" /> how to move.

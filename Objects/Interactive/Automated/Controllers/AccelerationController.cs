@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using eidng8.SpaceFlight.Objects.Dynamic.Motors;
+using eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers;
 using eidng8.SpaceFlight.States;
 using UnityEngine;
 using Motion = eidng8.SpaceFlight.States.Motion;

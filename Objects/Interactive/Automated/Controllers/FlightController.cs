@@ -11,10 +11,11 @@ using eidng8.SpaceFlight.Objects.Dynamic;
 using UnityEngine;
 
 
-namespace eidng8.SpaceFlight.Objects.Interactive.Automated
+namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
 {
     /// <inheritdoc cref="IFlightController" />
-    public abstract class FlightController : SpaceObject, IFlightController
+    public abstract class FlightController
+        : AutomatedController, IFlightController
     {
         /// <summary>Reference to a IMotor concrete class.</summary>
         protected IMotor Motor;
