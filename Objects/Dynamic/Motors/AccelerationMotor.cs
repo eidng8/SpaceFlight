@@ -16,19 +16,28 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
     /// <summary><see cref="AccelerationMotor" /> configuration attributes.</summary>
     public enum AccelerationMotorAttributes
     {
-        /// <summary>Maximum speed limit.</summary>
+        /// <summary>Maximum speed limit. Value type is <c>float</c>.</summary>
         MaxSpeed,
 
-        /// <summary>Maximum rotation speed.</summary>
+        /// <summary>Maximum rotation speed. Value type is <c>float</c>.</summary>
         MaxTurn,
 
-        /// <summary>Full throttle forward acceleration value.</summary>
+        /// <summary>
+        /// Full throttle forward acceleration value. Value type is
+        /// <c>float</c>.
+        /// </summary>
         MaxAcceleration,
 
-        /// <summary>Full reverse acceleration value.</summary>
+        /// <summary>
+        /// Full reverse acceleration value. Value type is
+        /// <c>float</c>.
+        /// </summary>
         MaxDeceleration,
 
-        /// <summary>Current rotation quaternion</summary>
+        /// <summary>
+        /// Current rotation quaternion. Value type is
+        /// <c>Quaternion</c>.
+        /// </summary>
         Rotation
     }
 
@@ -80,7 +89,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
                 (int)AccelerationMotorAttributes.MaxSpeed,
                 out v
             )) {
-                this._maxSpeed = (float)v;
+                if (v is float f) {
+                    this._maxSpeed = f;
+                }
             }
 
             this._maxTurn = 10;
@@ -88,7 +99,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
                 (int)AccelerationMotorAttributes.MaxTurn,
                 out v
             )) {
-                this._maxTurn = (float)v;
+                if (v is float f) {
+                    this._maxTurn = f;
+                }
             }
 
             this._maxAcceleration = 10;
@@ -96,7 +109,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
                 (int)AccelerationMotorAttributes.MaxAcceleration,
                 out v
             )) {
-                this._maxAcceleration = (float)v;
+                if (v is float f) {
+                    this._maxAcceleration = f;
+                }
             }
 
             this._maxDeceleration = 10;
@@ -104,7 +119,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
                 (int)AccelerationMotorAttributes.MaxDeceleration,
                 out v
             )) {
-                this._maxDeceleration = (float)v;
+                if (v is float f) {
+                    this._maxDeceleration = f;
+                }
             }
 
             this._roll = Quaternion.identity;
@@ -112,7 +129,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
                 (int)AccelerationMotorAttributes.Rotation,
                 out v
             )) {
-                this._roll = (Quaternion)v;
+                if (v is Quaternion f) {
+                    this._roll = f;
+                }
             }
         }
 
