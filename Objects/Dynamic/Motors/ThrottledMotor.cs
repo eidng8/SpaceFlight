@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
 namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 {
     public abstract class ThrottledMotor : IMotor
@@ -22,6 +21,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         public abstract float Acceleration { get; }
 
         /// <inheritdoc />
+        /// <remarks>It is clamped to [-1, 1]</remarks>
         public float Throttle {
             get => this._throttle;
             set => this._throttle = Mathf.Clamp(value, -1, 1);

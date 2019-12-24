@@ -113,7 +113,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         protected bool ShouldBrake()
         {
             AccelerationController control = this.Control;
-            float v = control.Vc;
+            float v = control.Velocity;
             float a = control.deceleration;
 
             // We calculate how much time is needed for the speed to reach `v`
@@ -158,7 +158,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             }
 
             Vector3 dir = this.Target.position - this.transform.position;
-            this.Control.Bearing = dir;
+            this.Control.TurnTo(dir);
         }
 
         protected void Update()
