@@ -16,7 +16,17 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
     /// <summary>A motor whose thrust is clamped within certain limit.</summary>
     public abstract class ThrottledMotor : IMotor
     {
+        // ReSharper disable once InconsistentNaming
+        protected Vector3 _turnTarget;
         private float _throttle;
+
+        protected ThrottledMotor() { }
+
+        protected ThrottledMotor(Dictionary<int, object> config)
+        {
+            // ReSharper disable once VirtualMemberCallInConstructor
+            this.Configure(config);
+        }
 
         /// <inheritdoc />
         public abstract float Acceleration { get; }
@@ -47,6 +57,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         public abstract float GetThrust();
 
         /// <inheritdoc />
-        public abstract void TurnTo(Vector3 target);
+        public virtual void TurnTo(Vector3 target)
+        {
+            this._turnTarget = target;
+        }
     }
 }
