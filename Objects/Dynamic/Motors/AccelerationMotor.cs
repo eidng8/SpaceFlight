@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
 namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 {
     public enum AccelerationMotorAttributes
@@ -20,7 +19,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         MaxTurn,
         MaxAcceleration,
         MaxDeceleration,
-        Rotation,
+        Rotation
     }
 
 
@@ -92,18 +91,25 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             }
         }
 
+        public Quaternion GetRoll(float deltaTime)
+        {
+            if (this._turnTarget == Vector3.zero) {
+                return Quaternion.identity;
+            }
+
+            Quaternion look = Quaternion.LookRotation(this._turnTarget);
+            float thrust = this.GetRollThrust(deltaTime);
+            this._roll = Quaternion.Lerp(this._roll, look, thrust);
+
+            return this._roll;
+        }
+
         /// <inheritdoc />
         public override float GetRollThrust(float deltaTime) =>
             this._maxTurn * deltaTime;
 
         /// <summary>Current acceleration value.</summary>
         public override float GetThrust() => this.Acceleration;
-
-        /// <inheritdoc />
-        public override void TurnTo(Vector3 target)
-        {
-            this._turnTarget = target;
-        }
 
         /// <summary>Calculates the velocity value after <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
@@ -118,17 +124,10 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             return this._velocity;
         }
 
-        public Quaternion GetRoll(float deltaTime)
+        /// <inheritdoc />
+        public override void TurnTo(Vector3 target)
         {
-            if (this._turnTarget == Vector3.zero) {
-                return Quaternion.identity;
-            }
-
-            Quaternion look = Quaternion.LookRotation(this._turnTarget);
-            float thrust = this.GetRollThrust(deltaTime);
-            this._roll = Quaternion.Lerp(this._roll, look, thrust);
-
-            return this._roll;
+            this._turnTarget = target;
         }
     }
 }

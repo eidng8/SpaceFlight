@@ -7,50 +7,40 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
 using eidng8.SpaceFlight.Events;
-
+using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
     /// <summary>
-    /// In flight logic. Tells <see cref="FlightController"/> how to move.
+    /// In flight logic. Tells <see cref="AccelerationController" /> how to move.
     /// </summary>
-    [RequireComponent(typeof(FlightController))]
+    [RequireComponent(typeof(AccelerationController))]
     public class FlightAI : MonoBehaviour
     {
-        /// <summary>
-        /// The distance to keep from target.
-        /// </summary>
+        /// <summary>The distance to keep from target.</summary>
         [Tooltip("The distance to keep from target.")]
         public float safeDistance = 5;
 
-        /// <summary>
-        /// Reference to the selected target object.
-        /// </summary>
-        public Transform Target { get; set; }
+        private AccelerationController _control;
+        private bool _controlAttached;
 
-        /// <summary>
-        /// Whether a target has been chosen.
-        /// </summary>
-        ///
+        /// <summary>Whether a target has been chosen.</summary>
         /// <remarks>
-        /// Directly check the <see cref="Target"/> against <c>null</c>
-        /// is an expensive operation. So we use this field to track the
-        /// status of target selection.
+        /// Directly check the <see cref="Target" /> against <c>null</c> is an expensive
+        /// operation. So we use this field to track the status of target selection.
         /// </remarks>
         public bool HasTarget { get; private set; }
 
-        /// <summary>
-        /// Reference to the attached <see cref="FlightController"/>.
-        /// </summary>
-        protected FlightController Control {
+        /// <summary>Reference to the selected target object.</summary>
+        public Transform Target { get; set; }
+
+        /// <summary>Reference to the attached <see cref="AccelerationController" />.</summary>
+        protected AccelerationController Control {
             get {
                 if (!this._controlAttached) {
-                    this._control = this.GetComponent<FlightController>();
+                    this._control = this.GetComponent<AccelerationController>();
                 }
 
                 return this._control;
@@ -61,9 +51,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             }
         }
 
-        private FlightController _control;
-        private bool _controlAttached;
-
         protected void Awake()
         {
             EventManager.Mgr.OnUserEvent(
@@ -72,17 +59,28 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             );
         }
 
-        protected void Update()
+        /// <summary>Determine acceleration throttle.</summary>
+        protected void DetermineThrottle()
         {
-            if (Input.GetKeyDown(KeyCode.W)) {
-                this.Control.FullThrottle();
-                Debug.Log("Forward thrust applied.");
+            if (!this.HasTarget) {
+                return;
             }
 
-            if (Input.GetKeyDown(KeyCode.S)) {
-                this.Control.FullReverse();
-                Debug.Log("Backward thrust applied.");
+            // If we start accelerating while facing away from the target,
+            // we'll make a bit of roundabout. So we don't do this.
+            if (!this.IsFacingTarget()) {
+                this.Control.FullStop();
+                return;
             }
+
+            // We've arrived at a distance that needs to slow down.
+            if (this.ShouldBrake()) {
+                this.Control.FullReverse();
+                return;
+            }
+
+            // Always use full throttle.
+            this.Control.FullThrottle();
         }
 
         protected void FixedUpdate()
@@ -92,12 +90,29 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Determines whether the object should start slowing down in order
-        /// to stop closet the target position.
+        /// Determine if we are facing the target. Facing doesn't mean we are directly
+        /// facing it, we can have around ±45º buffer.
+        /// </summary>
+        protected bool IsFacingTarget() =>
+            this.Control.IsFacing(this.Target.position);
+
+        /// <summary>
+        /// The objected selected event handler. Sets <see cref="Target" /> to the selected
+        /// object.
+        /// </summary>
+        protected void OnSelectTarget(ExtendedEventArgs arg0)
+        {
+            this.Target = arg0.Source.transform;
+            this.HasTarget = true;
+        }
+
+        /// <summary>
+        /// Determines whether the object should start slowing down in order to stop closet
+        /// the target position.
         /// </summary>
         protected bool ShouldBrake()
         {
-            FlightController control = this.Control;
+            AccelerationController control = this.Control;
             float v = control.Vc;
             float a = control.deceleration;
 
@@ -135,42 +150,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             return v * t / 2 >= d;
         }
 
-        /// <summary>
-        /// Determine acceleration throttle.
-        /// </summary>
-        protected void DetermineThrottle()
-        {
-            if (!this.HasTarget) {
-                return;
-            }
-
-            // If we start accelerating while facing away from the target,
-            // we'll make a bit of roundabout. So we don't do this.
-            if (!this.IsFacingTarget()) {
-                this.Control.FullStop();
-                return;
-            }
-
-            // We've arrived at a distance that needs to slow down.
-            if (this.ShouldBrake()) {
-                this.Control.FullReverse();
-                return;
-            }
-
-            // Always use full throttle.
-            this.Control.FullThrottle();
-        }
-
-        /// <summary>
-        /// Determine if we are facing the target. Facing doesn't mean we are
-        /// directly facing it, we can have around ±45º buffer.
-        /// </summary>
-        protected bool IsFacingTarget() =>
-            this.Control.IsFacing(this.Target.position);
-
-        /// <summary>
-        /// Tells <see cref="FlightController"/> to face target.
-        /// </summary>
+        /// <summary>Tells <see cref="AccelerationController" /> to face target.</summary>
         protected void TurnToTarget()
         {
             if (!this.HasTarget) {
@@ -181,14 +161,17 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             this.Control.Bearing = dir;
         }
 
-        /// <summary>
-        /// The objected selected event handler. Sets <see cref="Target"/> to
-        /// the selected object.
-        /// </summary>
-        protected void OnSelectTarget(ExtendedEventArgs arg0)
+        protected void Update()
         {
-            this.Target = arg0.Source.transform;
-            this.HasTarget = true;
+            if (Input.GetKeyDown(KeyCode.W)) {
+                this.Control.FullThrottle();
+                Debug.Log("Forward thrust applied.");
+            }
+
+            if (Input.GetKeyDown(KeyCode.S)) {
+                this.Control.FullReverse();
+                Debug.Log("Backward thrust applied.");
+            }
         }
     }
 }

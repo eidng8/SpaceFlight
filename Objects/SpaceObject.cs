@@ -9,19 +9,23 @@
 
 using UnityEngine;
 
+
 namespace eidng8.SpaceFlight.Objects
 {
     /// <summary>
-    /// Base class of all space objects. It makes sure all such objects have
-    /// their parameters properly set. Such as gravity, drag, kinematic.
+    /// Base class of all space objects. It makes sure all such objects have their
+    /// parameters properly set. Such as gravity, drag, kinematic.
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public abstract class SpaceObject : MonoBehaviour
     {
+        private Rigidbody _body;
+
+        private bool _set;
+
         /// <summary>
-        /// Reference to the attached <c>Rigidbody</c>. This rigid body's
-        /// gravity and drags are all zero.
-        /// And <c>isKinematic</c> is <c>false</c>.
+        /// Reference to the attached <c>Rigidbody</c>. This rigid body's gravity
+        /// and drags are all zero. And <c>isKinematic</c> is <c>false</c>.
         /// </summar>
         protected Rigidbody Body {
             get {
@@ -38,9 +42,5 @@ namespace eidng8.SpaceFlight.Objects
                 return this._body;
             }
         }
-
-        private Rigidbody _body;
-
-        private bool _set = false;
     }
 }
