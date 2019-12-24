@@ -16,9 +16,16 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
     /// <summary><see cref="AccelerationMotor" /> configuration attributes.</summary>
     public enum AccelerationMotorAttributes
     {
+        /// <summary>Maximum speed limit.</summary>
         MaxSpeed,
+
+        /// <summary>Maximum rotation speed.</summary>
         MaxTurn,
+
+        /// <summary>Full throttle forward acceleration value.</summary>
         MaxAcceleration,
+
+        /// <summary>Full reverse acceleration value.</summary>
         MaxDeceleration,
 
         /// <summary>Current rotation quaternion</summary>
@@ -26,10 +33,10 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
     }
 
 
+    /// <inheritdoc />
+    /// <remarks>A motor that works on constant acceleration.</remarks>
     public class AccelerationMotor : ThrottledMotor
     {
-        private float _acceleration;
-        private Vector3 _bearing;
         private float _maxAcceleration;
         private float _maxDeceleration;
         private float _maxSpeed;
