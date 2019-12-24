@@ -13,8 +13,10 @@ using UnityEngine;
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
+    /// <inheritdoc cref="IFlightController" />
     public abstract class FlightController : SpaceObject, IFlightController
     {
+        /// <summary>Reference to a IMotor concrete class.</summary>
         protected IMotor Motor;
 
         /// <inheritdoc />
@@ -28,7 +30,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
         /// <inheritdoc />
         public virtual float Velocity => this.Body.velocity.magnitude;
-
 
         /// <inheritdoc />
         public virtual float DistanceTo(Vector3 target) =>

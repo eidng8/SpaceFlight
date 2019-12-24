@@ -2,18 +2,18 @@
 // <copyright file="EventChannels.cs" company="eidng8">
 //      GPLv3
 // </copyright>
-// <summary>
-// 
-// </summary>
 // ---------------------------------------------------------------------------
 
 using System.Collections.Generic;
 using UnityEngine;
 
 
-
 namespace eidng8.SpaceFlight.Objects.Dynamic
 {
+    /// <summary>
+    /// Motors are representation of propulsion systems. Every flight controller has to
+    /// have exactly one motor.
+    /// </summary>
     public interface IMotor
     {
         /// <summary>Current acceleration value.</summary>
@@ -22,17 +22,24 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         /// <summary>Current throttle value.</summary>
         float Throttle { get; set; }
 
+        /// <summary>
+        /// Configures the motor. Different types of motors have different configuration
+        /// attributes. Please consult documentation of the motor you are using.
+        /// </summary>
+        /// <param name="config">A <c>Dictionary</c> of configuration attributes.</param>
         void Configure(Dictionary<int, object> config);
 
         /// <summary>
-        /// Convenient method to apply max reverse <see cref="Acceleration" />.
+        /// Convenient method to apply maximum reverse <see cref="Throttle" />.
         /// </summary>
         void FullReverse();
 
         /// <summary>Convenient method to apply zero <see cref="Throttle" />.</summary>
         void FullStop();
 
-        /// <summary>Convenient method to apply max <see cref="Throttle" />.</summary>
+        /// <summary>
+        /// Convenient method to apply maximum forward <see cref="Throttle" />.
+        /// </summary>
         void FullThrottle();
 
         /// <summary>Current rotation thrust value.</summary>

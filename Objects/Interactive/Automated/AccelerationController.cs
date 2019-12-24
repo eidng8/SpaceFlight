@@ -16,31 +16,13 @@ using Motion = eidng8.SpaceFlight.States.Motion;
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
-    /// <summary>
-    /// AccelerationController is one of the main handlers of space flight simulation.
-    /// It uses acceleration. So it's not fully physical. Controller act like state
-    /// machines, providing limited degrees of autonomy. Such as moving forward,
-    /// accelerating, etc. Controllers don't contain any activity logic, such as flying
-    /// towards a target. Such logic are implemented by other classes such as the
-    /// <see cref="FlightAI" />.
-    /// <para>
-    /// This controller doesn't allow setting velocity or acceleration directly. Use
-    /// the <see cref="Throttle" /> property to control movement acceleration. A
-    /// <see cref="FullThrottle" /> method is provided for convenience. Use
-    /// <see cref="FullStop" /> to cut acceleration to 0 and start decelerating. There
-    /// is no way to apply deceleration directly.
-    /// </para>
-    /// </summary>
+    /// <inheritdoc />
     /// <remarks>
-    /// Physics used: Motion with constant acceleration.
-    /// <para>
-    /// The reason of naming this <c>AccelerationController</c> instead of
-    /// <c>FlightSimulator</c> is to follow Unity's naming convention. As this script
-    /// will be added to game objects' script component. And the main script component
-    /// of game objects usually ends with the word <c>Controller</c>.
-    /// </para>
+    /// This controller uses acceleration. So it's not fully physical. Physics used:
+    /// Motion with constant acceleration.
     /// </remarks>
     [RequireComponent(typeof(Rigidbody))]
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class AccelerationController : FlightController
     {
         /// <summary>
@@ -51,7 +33,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             "Full throttle acceleration. This is used to speed up the object"
             + " until it reaches maxSpeed"
         )]
-        public float acceleration = 100;
+        public float maxAcceleration = 20;
 
         /// <summary>
         /// Maximum deceleration. This is used to slow down the object until fully stopped.
@@ -60,7 +42,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             "Maximum deceleration. This is used to slow down the object until"
             + " fully stopped."
         )]
-        public float deceleration = 200;
+        public float maxDeceleration = 5;
 
         /// <summary>Maximum forward velocity.</summary>
         [Tooltip("Maximum forward velocity."), Range(0, 300000)]
@@ -77,7 +59,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         // ReSharper disable once MemberCanBePrivate.Global
         // ReSharper disable once InconsistentNaming
         protected float _velocity;
-        private float _acceleration;
 
         /// <inheritdoc />
         public override float Acceleration {
@@ -104,7 +85,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             }
             set => this._state = value;
         }
-
 
         /// <summary>
         /// Calculate and apply velocity to game object. It should be called in
@@ -177,9 +157,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                 [(int)AccelerationMotorAttributes.MaxTurn] = this.maxTurn,
                 [(int)AccelerationMotorAttributes.MaxSpeed] = this.maxSpeed,
                 [(int)AccelerationMotorAttributes.MaxAcceleration] =
-                    this.acceleration,
+                    this.maxAcceleration,
                 [(int)AccelerationMotorAttributes.MaxDeceleration] =
-                    this.deceleration,
+                    this.maxDeceleration,
                 [(int)AccelerationMotorAttributes.Rotation] =
                     this.transform.rotation
             };

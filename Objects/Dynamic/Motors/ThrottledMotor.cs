@@ -13,6 +13,7 @@ using UnityEngine;
 
 namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 {
+    /// <summary>A motor whose thrust is clamped within certain limit.</summary>
     public abstract class ThrottledMotor : IMotor
     {
         private float _throttle;

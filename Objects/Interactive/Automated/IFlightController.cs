@@ -12,6 +12,12 @@ using UnityEngine;
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
+    /// <summary>
+    /// Flight controllers are main handlers of space objects that can move. Analogous
+    /// to space ships. Ships can't move by their own, they have to have propulsion
+    /// systems installed. Propulsion systems are represented by concrete classes of
+    /// the <see cref="eidng8.SpaceFlight.Objects.Dynamic.IMotor" /> interface.
+    /// </summary>
     public interface IFlightController
     {
         /// <summary>Returns the current acceleration value.</summary>

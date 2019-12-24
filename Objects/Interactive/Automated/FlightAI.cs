@@ -114,7 +114,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         {
             AccelerationController control = this.Control;
             float v = control.Velocity;
-            float a = control.deceleration;
+            float a = control.maxDeceleration;
 
             // We calculate how much time is needed for the speed to reach `v`
             // with acceleration `a`. From deceleration point of view, this

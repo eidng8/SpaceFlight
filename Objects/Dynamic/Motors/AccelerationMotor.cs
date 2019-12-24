@@ -13,12 +13,15 @@ using UnityEngine;
 
 namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 {
+    /// <summary><see cref="AccelerationMotor" /> configuration attributes.</summary>
     public enum AccelerationMotorAttributes
     {
         MaxSpeed,
         MaxTurn,
         MaxAcceleration,
         MaxDeceleration,
+
+        /// <summary>Current rotation quaternion</summary>
         Rotation
     }
 
@@ -35,6 +38,8 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         private Vector3 _turnTarget;
         private float _velocity;
 
+        /// <summary>Construct a new instance and apply the given configuration.</summary>
+        /// <param name="config"></param>
         public AccelerationMotor(Dictionary<int, object> config)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
@@ -91,6 +96,9 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             }
         }
 
+        /// <summary>Returns the next rotation quaternion in <c>deltaTime</c>.</summary>
+        /// <param name="deltaTime"></param>
+        /// <returns></returns>
         public Quaternion GetRoll(float deltaTime)
         {
             if (this._turnTarget == Vector3.zero) {
@@ -111,7 +119,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// <summary>Current acceleration value.</summary>
         public override float GetThrust() => this.Acceleration;
 
-        /// <summary>Calculates the velocity value after <c>deltaTime</c>.</summary>
+        /// <summary>Calculates the velocity value in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
         /// <returns></returns>
         public float GetVelocity(float deltaTime)
