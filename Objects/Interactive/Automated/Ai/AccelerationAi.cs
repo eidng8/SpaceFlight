@@ -8,36 +8,41 @@
 // ---------------------------------------------------------------------------
 
 using eidng8.SpaceFlight.Events;
+using eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers;
 using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 {
-    /// <summary>
-    /// In flight logic. Tells <see cref="AccelerationController" /> how to move.
-    /// </summary>
+    /// <inheritdoc />
+    /// <remarkes>
+    /// This component works with <see cref="AccelerationController" />.
+    /// </remarkes>
     [RequireComponent(typeof(AccelerationController))]
-    public class FlightAI : MonoBehaviour
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
+    public class AccelerationAi : FlightAi
     {
         /// <summary>The distance to keep from target.</summary>
         [Tooltip("The distance to keep from target.")]
         public float safeDistance = 5;
 
-        private AccelerationController _control;
-        private bool _controlAttached;
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once InconsistentNaming
+        protected AccelerationController _control;
 
-        /// <summary>Whether a target has been chosen.</summary>
-        /// <remarks>
-        /// Directly check the <see cref="Target" /> against <c>null</c> is an expensive
-        /// operation. So we use this field to track the status of target selection.
-        /// </remarks>
-        public bool HasTarget { get; private set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once InconsistentNaming
+        protected bool _controlAttached;
 
-        /// <summary>Reference to the selected target object.</summary>
-        public Transform Target { get; set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once InconsistentNaming
+        protected bool _listeningEvents;
 
-        /// <summary>Reference to the attached <see cref="AccelerationController" />.</summary>
-        protected AccelerationController Control {
+        /// <summary>
+        /// Reference to the attached
+        /// <see cref="AccelerationController" />.
+        /// </summary>
+        protected virtual AccelerationController Control {
             get {
                 if (!this._controlAttached) {
                     this._control = this.GetComponent<AccelerationController>();
@@ -51,16 +56,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             }
         }
 
-        protected void Awake()
-        {
-            EventManager.Mgr.OnUserEvent(
-                UserEvents.Select,
-                this.OnSelectTarget
-            );
-        }
-
         /// <summary>Determine acceleration throttle.</summary>
-        protected void DetermineThrottle()
+        protected virtual void DetermineThrottle()
         {
             if (!this.HasTarget) {
                 return;
@@ -68,7 +65,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 
             // If we start accelerating while facing away from the target,
             // we'll make a bit of roundabout. So we don't do this.
-            if (!this.IsFacingTarget()) {
+            if (!this.Control.IsFacing(this.Target.position)) {
                 this.Control.FullStop();
                 return;
             }
@@ -89,28 +86,34 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             this.DetermineThrottle();
         }
 
-        /// <summary>
-        /// Determine if we are facing the target. Facing doesn't mean we are directly
-        /// facing it, we can have around ±45º buffer.
-        /// </summary>
-        protected bool IsFacingTarget() =>
-            this.Control.IsFacing(this.Target.position);
 
-        /// <summary>
-        /// The objected selected event handler. Sets <see cref="Target" /> to the selected
-        /// object.
-        /// </summary>
-        protected void OnSelectTarget(ExtendedEventArgs arg0)
+        protected virtual void OnEnable()
         {
-            this.Target = arg0.Source.transform;
-            this.HasTarget = true;
+            if (this._listeningEvents) {
+                return;
+            }
+
+            EventManager.Mgr.OnUserEvent(
+                UserEvents.Select,
+                this.OnSelectTarget
+            );
+            this._listeningEvents = true;
         }
 
         /// <summary>
-        /// Determines whether the object should start slowing down in order to stop closet
-        /// the target position.
+        /// The objected selected event handler. Sets <c>Target</c> to the
+        /// selected object.
         /// </summary>
-        protected bool ShouldBrake()
+        protected virtual void OnSelectTarget(ExtendedEventArgs arg0)
+        {
+            this.Target = arg0.Source.transform;
+        }
+
+        /// <summary>
+        /// Determines whether the object should start slowing down in order to
+        /// stop closet the target position.
+        /// </summary>
+        protected virtual bool ShouldBrake()
         {
             AccelerationController control = this.Control;
             float v = control.Velocity;
@@ -118,7 +121,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 
             // We calculate how much time is needed for the speed to reach `v`
             // with acceleration `a`. From deceleration point of view, this
-            // means how much time is needed to stop fully.
+            // means how much time is needed to stop completely.
             float t = v / a;
 
             // Remember to take safe distance into account.
@@ -150,8 +153,11 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             return v * t / 2 >= d;
         }
 
-        /// <summary>Tells <see cref="AccelerationController" /> to face target.</summary>
-        protected void TurnToTarget()
+        /// <summary>
+        /// Tells <see cref="AccelerationController" /> to face
+        /// target.
+        /// </summary>
+        protected virtual void TurnToTarget()
         {
             if (!this.HasTarget) {
                 return;
@@ -159,19 +165,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 
             Vector3 dir = this.Target.position - this.transform.position;
             this.Control.TurnTo(dir);
-        }
-
-        protected void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.W)) {
-                this.Control.FullThrottle();
-                Debug.Log("Forward thrust applied.");
-            }
-
-            if (Input.GetKeyDown(KeyCode.S)) {
-                this.Control.FullReverse();
-                Debug.Log("Backward thrust applied.");
-            }
         }
     }
 }
