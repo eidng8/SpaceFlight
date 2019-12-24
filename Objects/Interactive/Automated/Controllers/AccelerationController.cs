@@ -9,26 +9,25 @@
 
 using System.Collections.Generic;
 using eidng8.SpaceFlight.Objects.Dynamic.Motors;
-using eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers;
 using eidng8.SpaceFlight.States;
 using UnityEngine;
 using Motion = eidng8.SpaceFlight.States.Motion;
 
 
-namespace eidng8.SpaceFlight.Objects.Interactive.Automated
+namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
 {
     /// <inheritdoc />
     /// <remarks>
-    /// This controller uses acceleration. So it's not fully physical. Physics used:
-    /// Motion with constant acceleration.
+    /// This controller uses acceleration. So it's not fully physical.
+    /// Physics used: Motion with constant acceleration.
     /// </remarks>
     [RequireComponent(typeof(Rigidbody))]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class AccelerationController : FlightController
     {
         /// <summary>
-        /// Full throttle acceleration. This is used to speed up the object until it
-        /// reaches <see cref="maxSpeed" />.
+        /// Full throttle acceleration. This is used to speed up the object
+        /// until it reaches <see cref="maxSpeed" />.
         /// </summary>
         [Tooltip(
             "Full throttle acceleration. This is used to speed up the object"
@@ -37,7 +36,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         public float maxAcceleration = 20;
 
         /// <summary>
-        /// Maximum deceleration. This is used to slow down the object until fully stopped.
+        /// Maximum deceleration. This is used to slow down the object until
+        /// fully stopped.
         /// </summary>
         [Tooltip(
             "Maximum deceleration. This is used to slow down the object until"
@@ -91,9 +91,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// Calculate and apply velocity to game object. It should be called in
         /// <c>FixedUpdate()</c>. Also updates the <see cref="State" />.
         /// <para>
-        /// Remember that it is doing actual physics calculation here. Though Unity reliefs
-        /// us from a lot of burden. We still need to have Newton's Laws in mind to
-        /// understand the outcome of such calculation.
+        /// Remember that it is doing actual physics calculation here. Though
+        /// Unity reliefs us from a lot of burden. We still need to have
+        /// Newton's Laws in mind to understand the outcome of such
+        /// calculation.
         /// </para>
         /// </summary>
         protected virtual void ApplySpeed()
@@ -118,7 +119,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
             }
         }
 
-        /// <summary>Actually makes the turn. Also updates the <see cref="State" />.</summary>
+        /// <summary>
+        /// Actually makes the turn. Also updates the
+        /// <see cref="State" />.
+        /// </summary>
         protected virtual void ApplyTurn()
         {
             if (!(this.Motor is AccelerationMotor motor)) {
@@ -141,8 +145,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Initialize the instance, allocating a new <see cref="FlightState" /> instance
-        /// with default values.
+        /// Initialize the instance, allocating a new
+        /// <see cref="FlightState" /> instance with default values.
         /// </summary>
         protected virtual void Init()
         {
@@ -173,7 +177,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Update <see cref="State" /> information from underlying game object.
+        /// Update <see cref="State" /> information from underlying game
+        /// object.
         /// </summary>
         protected virtual void UpdateExistence()
         {
