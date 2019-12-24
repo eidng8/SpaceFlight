@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // <copyright file="EventChannels.cs" company="eidng8">
 //      GPLv3
 // </copyright>
@@ -22,28 +22,25 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         public abstract float Acceleration { get; }
 
         /// <inheritdoc />
-        public abstract Vector3 Bearing { get; set; }
-
-        /// <inheritdoc />
         public float Throttle {
-            get => _throttle;
-            set => _throttle = Mathf.Clamp(value, -1, 1);
+            get => this._throttle;
+            set => this._throttle = Mathf.Clamp(value, -1, 1);
         }
 
         /// <inheritdoc />
         public abstract void Configure(Dictionary<int, object> config);
 
         /// <inheritdoc />
-        public void FullReverse() => _throttle = -1;
+        public void FullReverse() => this._throttle = -1;
 
         /// <inheritdoc />
-        public void FullStop() => _throttle = 0;
+        public void FullStop() => this._throttle = 0;
 
         /// <inheritdoc />
-        public void FullThrottle() => _throttle = 1;
+        public void FullThrottle() => this._throttle = 1;
 
         /// <inheritdoc />
-        public abstract float GetRoll(float deltaTime);
+        public abstract float GetRollThrust(float deltaTime);
 
         /// <inheritdoc />
         public abstract float GetThrust();

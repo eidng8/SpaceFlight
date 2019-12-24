@@ -102,7 +102,15 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <summary>
         /// The direction of facing.
         /// </summary>
-        public Vector3 Bearing { get; set; }
+        public Vector3 Bearing {
+            get => this._bearing;
+            set {
+                this._bearing = value;
+                this.Motor.TurnTo(value);
+            }
+        }
+
+        private Vector3 _bearing;
 
         /// <summary>
         /// State data of the game object.
@@ -124,8 +132,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 
 
         /// <summary>
-        /// Sets <see cref="Throttle"/> to <c>1</c>,
-        /// and <see cref="Stopping"/> to <c>false</c>.
+        /// Sets <see cref="Throttle"/> to <c>1</c>.
         /// </summary>
         public void FullThrottle()
         {
@@ -133,8 +140,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         }
 
         /// <summary>
-        /// Sets <see cref="Throttle"/> to <c>0</c>,
-        /// and <see cref="Stopping"/> to <c>true</c>.
+        /// Sets <see cref="Throttle"/> to <c>0</c>.
         /// </summary>
         public void FullStop()
         {
@@ -296,6 +302,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
                     this.acceleration,
                 [(int)AccelerationMotorAttributes.MaxDeceleration] =
                     this.deceleration,
+                [(int)AccelerationMotorAttributes.Rotation] =
+                    this.transform.rotation,
             };
             this.Motor = new AccelerationMotor(config);
         }
@@ -374,19 +382,20 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         protected void ApplyTurn()
         {
-            Vector3 dir = this.Bearing;
-            if (dir == Vector3.zero) {
-                return;
-            }
+            // Vector3 dir = this.Bearing;
+            // if (dir == Vector3.zero) {
+            //     return;
+            // }
 
-            Quaternion to = Quaternion.LookRotation(dir);
-
+            // Quaternion to = Quaternion.LookRotation(dir);
+            Transform me = this.transform;
             Motion mo = this.State.Motion;
-            Quaternion bearing = Quaternion.Lerp(
-                this.transform.rotation,
-                to,
-                this.Motor.GetRoll(Time.fixedDeltaTime)
-            );
+            Quaternion bearing = this.Motor.GetRoll(Time.fixedDeltaTime);
+            // Quaternion bearing = Quaternion.Lerp(
+            //     this.transform.rotation,
+            //     to,
+            //     this.Motor.GetRollThrust(Time.fixedDeltaTime)
+            // );
 
             this.transform.rotation = bearing;
             mo.Bearing = bearing;

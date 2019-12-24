@@ -28,7 +28,7 @@ namespace eidng8.SpaceFlight.Events
             get {
                 if (!EventManager._mgr) {
                     EventManager._mgr =
-                        FindObjectOfType(typeof(EventManager)) as EventManager;
+                        UnityEngine.Object.FindObjectOfType(typeof(EventManager)) as EventManager;
 
                     if (null == EventManager._mgr) {
                         Debug.LogError(

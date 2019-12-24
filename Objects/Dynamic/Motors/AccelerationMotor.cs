@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // <copyright file="EventChannels.cs" company="eidng8">
 //      GPLv3
 // </copyright>
@@ -19,11 +19,12 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         MaxSpeed,
         MaxTurn,
         MaxAcceleration,
-        MaxDeceleration
+        MaxDeceleration,
+        Rotation,
     }
 
 
-    public class AccelerationMotor : ThrottledMotor, IMotor
+    public class AccelerationMotor : ThrottledMotor
     {
         private float _acceleration;
         private Vector3 _bearing;
@@ -31,89 +32,103 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         private float _maxDeceleration;
         private float _maxSpeed;
         private float _maxTurn;
-        private float _roll;
+        private Quaternion _roll;
         private Vector3 _turnTarget;
         private float _velocity;
 
         public AccelerationMotor(Dictionary<int, object> config)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
-            Configure(config);
+            this.Configure(config);
         }
-
 
         /// <inheritdoc />
         public override float Acceleration =>
-            (Throttle < 0 ? _maxDeceleration : _maxAcceleration)
-            * Throttle;
-
-        /// <inheritdoc />
-        public override Vector3 Bearing {
-            get => _bearing;
-            set => _bearing = value;
-        }
+            (this.Throttle < 0 ? this._maxDeceleration : this._maxAcceleration)
+            * this.Throttle;
 
         /// <inheritdoc />
         public override void Configure(Dictionary<int, object> config)
         {
             object v;
-            _maxSpeed = 100;
+            this._maxSpeed = 100;
             if (config.TryGetValue(
                 (int)AccelerationMotorAttributes.MaxSpeed,
                 out v
             )) {
-                _maxSpeed = (float)v;
+                this._maxSpeed = (float)v;
             }
 
-            _maxTurn = 10;
+            this._maxTurn = 10;
             if (config.TryGetValue(
                 (int)AccelerationMotorAttributes.MaxTurn,
                 out v
             )) {
-                _maxTurn = (float)v;
+                this._maxTurn = (float)v;
             }
 
-            _maxAcceleration = 10;
+            this._maxAcceleration = 10;
             if (config.TryGetValue(
                 (int)AccelerationMotorAttributes.MaxAcceleration,
                 out v
             )) {
-                _maxAcceleration = (float)v;
+                this._maxAcceleration = (float)v;
             }
 
-            _maxDeceleration = 10;
+            this._maxDeceleration = 10;
             if (config.TryGetValue(
                 (int)AccelerationMotorAttributes.MaxDeceleration,
                 out v
             )) {
-                _maxDeceleration = (float)v;
+                this._maxDeceleration = (float)v;
+            }
+
+            this._roll = Quaternion.identity;
+            if (config.TryGetValue(
+                (int)AccelerationMotorAttributes.Rotation,
+                out v
+            )) {
+                this._roll = (Quaternion)v;
             }
         }
 
         /// <inheritdoc />
-        public override float GetRoll(float deltaTime) =>
-            _maxTurn * Time.deltaTime;
+        public override float GetRollThrust(float deltaTime) =>
+            this._maxTurn * deltaTime;
 
         /// <summary>Current acceleration value.</summary>
-        public override float GetThrust() => Acceleration;
+        public override float GetThrust() => this.Acceleration;
+
+        /// <inheritdoc />
+        public override void TurnTo(Vector3 target)
+        {
+            this._turnTarget = target;
+        }
 
         /// <summary>Calculates the velocity value after <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
         /// <returns></returns>
         public float GetVelocity(float deltaTime)
         {
-            _velocity = Mathf.Clamp(
-                _velocity + Acceleration * deltaTime,
+            this._velocity = Mathf.Clamp(
+                this._velocity + this.Acceleration * deltaTime,
                 0,
-                _maxSpeed
+                this._maxSpeed
             );
-            return _velocity;
+            return this._velocity;
         }
 
-        /// <inheritdoc />
-        public override void TurnTo(Vector3 target)
+        public Quaternion GetRoll(float deltaTime)
         {
-            _turnTarget = target;
+            if (this._turnTarget == Vector3.zero) {
+                return Quaternion.identity;
+            }
+
+            Quaternion look = Quaternion.LookRotation(this._turnTarget);
+            float thrust = this.GetRollThrust(deltaTime);
+            this._roll = Quaternion.Lerp(this._roll, look, thrust);
+
+            return this._roll;
         }
     }
 }

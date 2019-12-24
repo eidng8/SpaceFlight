@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // <copyright file="EventChannels.cs" company="eidng8">
 //      GPLv3
 // </copyright>
@@ -19,9 +19,6 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         /// <summary>Current acceleration value.</summary>
         float Acceleration { get; }
 
-        /// <summary>Current bearing value.</summary>
-        Vector3 Bearing { get; set; }
-
         /// <summary>Current throttle value.</summary>
         float Throttle { get; set; }
 
@@ -38,8 +35,8 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         /// <summary>Convenient method to apply max <see cref="Throttle" />.</summary>
         void FullThrottle();
 
-        /// <summary>Current rotation value.</summary>
-        float GetRoll(float deltaTime);
+        /// <summary>Current rotation thrust value.</summary>
+        float GetRollThrust(float deltaTime);
 
         /// <summary>Current forward thrust value.</summary>
         float GetThrust();
