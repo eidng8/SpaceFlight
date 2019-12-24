@@ -13,10 +13,14 @@ using UnityEngine;
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated
 {
     /// <summary>
-    /// Flight controllers are main handlers of space objects that can move. Analogous
-    /// to space ships. Ships can't move by their own, they have to have propulsion
-    /// systems installed. Propulsion systems are represented by concrete classes of
-    /// the <see cref="eidng8.SpaceFlight.Objects.Dynamic.IMotor" /> interface.
+    /// Flight controllers are main handlers of space objects that can
+    /// move. Analogous to space ships. Ships can't move by their own, they
+    /// have to have propulsion systems installed. Propulsion systems are
+    /// represented by concrete classes of the
+    /// <see cref="eidng8.SpaceFlight.Objects.Dynamic.IMotor" /> interface.
+    /// Also, you'll most likely attach controllers to rigid bodies. So
+    /// don't forget to add <c>[RequireComponent(typeof(Rigidbody))]</c> to
+    /// final classes that will be used.
     /// </summary>
     public interface IFlightController : IObjectController
     {
@@ -35,7 +39,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         float DistanceTo(Vector3 target);
 
         /// <summary>
-        /// Estimates the arrival time according to current velocity and acceleration.
+        /// Estimates the arrival time according to current velocity and
+        /// acceleration.
         /// </summary>
         float EstimatedArrival(float distance);
 
@@ -49,8 +54,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         void FullThrottle();
 
         /// <summary>
-        /// Determine if we are facing the target. Facing doesn't mean we are directly
-        /// facing it, we can have around ±45º buffer by default.
+        /// Determine if we are facing the target. Facing doesn't mean we are
+        /// directly facing it, we can have around ±45º buffer by default.
         /// </summary>
         /// <param name="target"></param>
         /// <param name="tolerance"></param>
