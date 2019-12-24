@@ -35,15 +35,32 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 
     /// <inheritdoc />
     /// <remarks>A motor that works on constant acceleration.</remarks>
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class AccelerationMotor : ThrottledMotor
     {
-        private float _maxAcceleration;
-        private float _maxDeceleration;
-        private float _maxSpeed;
-        private float _maxTurn;
-        private Quaternion _roll;
-        private Vector3 _turnTarget;
-        private float _velocity;
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected float _maxAcceleration;
+
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected float _maxDeceleration;
+
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected float _maxSpeed;
+
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected float _maxTurn;
+
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected Quaternion _roll;
+
+        // ReSharper disable once InconsistentNaming
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected float _velocity;
 
         /// <inheritdoc />
         public AccelerationMotor(Dictionary<int, object> config) :
@@ -102,7 +119,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// <summary>Returns the next rotation quaternion in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
         /// <returns></returns>
-        public Quaternion GetRoll(float deltaTime)
+        public virtual Quaternion GetRoll(float deltaTime)
         {
             if (this._turnTarget == Vector3.zero) {
                 return Quaternion.identity;
@@ -125,7 +142,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// <summary>Calculates the velocity value in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
         /// <returns></returns>
-        public float GetVelocity(float deltaTime)
+        public virtual float GetVelocity(float deltaTime)
         {
             this._velocity = Mathf.Clamp(
                 this._velocity + this.Acceleration * deltaTime,
@@ -133,12 +150,6 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
                 this._maxSpeed
             );
             return this._velocity;
-        }
-
-        /// <inheritdoc />
-        public override void TurnTo(Vector3 target)
-        {
-            this._turnTarget = target;
         }
     }
 }
