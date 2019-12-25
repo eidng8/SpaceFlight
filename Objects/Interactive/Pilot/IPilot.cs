@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// <copyright file="IFlightAi.cs" company="eidng8">
+// <copyright file="IPilot.cs" company="eidng8">
 //      GPLv3
 // </copyright>
 // <summary>
@@ -7,21 +7,12 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using eidng8.SpaceFlight.Objects.Interactive.Automated;
 using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
 {
-    /// <summary>
-    /// Logic that makes objects move. Sub-class of this interface are
-    /// supposed to work with concrete implementation of
-    /// <see cref="IFlightController" />. To concrete sub-classes of this
-    /// interface, you'll likely want to add the attribute
-    /// <c>[RequireComponent(typeof(...))]</c> to a concrete class that
-    /// implements the <see cref="IFlightController" />.
-    /// </summary>
-    public interface IFlightAi
+    public interface IPilot
     {
         /// <summary>Whether a target has been chosen.</summary>
         /// <remarks>
