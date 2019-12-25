@@ -14,14 +14,15 @@ using UnityEngine;
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
 {
     /// <inheritdoc cref="IFlightController" />
-    public abstract class FlightController
+    public abstract class FlightController<TM>
         : AutomatedController, IFlightController
+        where TM : IMotor
     {
         /// <summary>Reference to a IMotor concrete class.</summary>
-        protected IMotor Motor;
+        protected TM Motor;
 
         /// <inheritdoc />
-        public abstract float Acceleration { get; }
+        public virtual float Acceleration => this.Motor.Acceleration;
 
         /// <inheritdoc />
         public virtual float Throttle {
@@ -47,10 +48,11 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         ///     href="https://opentextbc.ca/physicstestbook2/chapter/motion-equations-for-constant-acceleration-in-one-dimension/">
         /// Motion
         /// </a>
-        /// . Ah! Back to physics and maths. The two links provide lectures needed for this
-        /// calculation. Here we have to find out the time needed to cover the distance. We
-        /// use the formula with initial speed and constant acceleration: <c>d=vt+at²</c>.
-        /// The formula is then transformed as following:
+        /// . Ah! Back to physics and maths. The two links provide lectures
+        /// needed for this calculation. Here we have to find out the time
+        /// needed to cover the distance. We use the formula with initial speed
+        /// and constant acceleration: <c>d=vt+at²</c>. The formula is then
+        /// transformed as following:
         /// <code>
         /// => at² + vt = d
         /// 
@@ -106,9 +108,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         /// <param name="distance">Distance to be covered.</param>
         /// <returns>
         /// The estimated time of arrival. In case of deceleration,
-        /// <c>float.PositiveInfinity</c> may be returned if it couldn't reach the target.
-        /// The actual unit is not crucial in most circumstances. One could think it were
-        /// in seconds.
+        /// <c>float.PositiveInfinity</c> may be returned if it couldn't reach
+        /// the target. The actual unit is not crucial in most circumstances.
+        /// One could think it were in seconds.
         /// </returns>
         public virtual float EstimatedArrival(float distance)
         {

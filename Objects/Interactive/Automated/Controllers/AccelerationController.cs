@@ -23,7 +23,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
     /// </remarks>
     [RequireComponent(typeof(Rigidbody))]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class AccelerationController : FlightController
+    public class AccelerationController : FlightController<AccelerationMotor>
     {
         /// <summary>
         /// Full throttle acceleration. This is used to speed up the object
@@ -57,24 +57,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         // ReSharper disable once InconsistentNaming
         protected FlightState _state;
 
-        // ReSharper disable once MemberCanBePrivate.Global
-        // ReSharper disable once InconsistentNaming
-        protected float _velocity;
-
-        /// <inheritdoc />
-        public override float Acceleration {
-            get {
-                if (!(this.Motor is AccelerationMotor motor)) {
-                    return 0;
-                }
-
-                return motor.Acceleration;
-            }
-        }
-
-        /// <inheritdoc />
-        public override float Velocity => this._velocity;
-
         /// <summary>State data of the game object.</summary>
         protected virtual FlightState State {
             get {
@@ -99,22 +81,18 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         /// </summary>
         protected virtual void ApplySpeed()
         {
-            if (!(this.Motor is AccelerationMotor motor)) {
-                return;
-            }
-
-            this._velocity = motor.GetVelocity(Time.fixedDeltaTime);
+            float velocity = this.Motor.GetVelocity(Time.fixedDeltaTime);
 
             Motion mo = this.State.Motion;
-            if (mo.Speed.Equals(this.Velocity)) {
+            if (mo.Speed.Equals(velocity)) {
                 return;
             }
 
-            mo.Speed = this.Velocity;
+            mo.Speed = velocity;
             this.State.Motion = mo;
-            this.Body.velocity = this.Velocity * this.transform.forward;
+            this.Body.velocity = velocity * this.transform.forward;
 
-            if (this.Velocity.Equals(0)) {
+            if (velocity.Equals(0)) {
                 this.FullStop();
             }
         }
@@ -125,12 +103,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         /// </summary>
         protected virtual void ApplyTurn()
         {
-            if (!(this.Motor is AccelerationMotor motor)) {
-                return;
-            }
-
             Motion mo = this.State.Motion;
-            Quaternion bearing = motor.GetRoll(Time.fixedDeltaTime);
+            Quaternion bearing = this.Motor.GetRoll(Time.fixedDeltaTime);
 
             this.transform.rotation = bearing;
             mo.Bearing = bearing;
