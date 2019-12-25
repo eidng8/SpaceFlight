@@ -19,6 +19,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
     /// with.
     /// </typeparam>
     public abstract class FlightAi<TC> : MonoBehaviour, IFlightAi
+        where TC : IFlightController
     {
         private TC _control;
         private bool _controlAttached;
