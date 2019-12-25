@@ -14,6 +14,13 @@ using UnityEngine;
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
 {
     /// <inheritdoc cref="IFlightController" />
+    /// <remarks>
+    /// One may see that there is no definition here that hints on how the
+    /// controller interacts with motor. This is because the vast
+    /// differences among different types of applied physics there. Say
+    /// motions by force and acceleration need to work with completely
+    /// different sets of variables applied to the object.
+    /// </remarks>
     public abstract class FlightController<TM>
         : AutomatedController, IFlightController
         where TM : IMotor
