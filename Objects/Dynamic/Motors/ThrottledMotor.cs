@@ -7,22 +7,29 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 {
-    /// <summary>A motor whose thrust is clamped within certain limit.</summary>
-    public abstract class ThrottledMotor : IMotor
+    /// <summary>A motor whose thrust is clamped to rang [-1,1].</summary>
+    public abstract class ThrottledMotor<TC> : IMotor
+        where TC : IMotorConfig, new()
     {
         // ReSharper disable once InconsistentNaming
         protected Vector3 _turnTarget;
+
+        private IMotorConfig _config;
+
         private float _throttle;
 
-        protected ThrottledMotor() { }
+        protected ThrottledMotor()
+        {
+            // ReSharper disable once VirtualMemberCallInConstructor
+            this.Configure(new TC());
+        }
 
-        protected ThrottledMotor(Dictionary<int, object> config)
+        protected ThrottledMotor(TC config)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
             this.Configure(config);
@@ -38,8 +45,20 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             set => this._throttle = Mathf.Clamp(value, -1, 1);
         }
 
+        protected TC Config {
+            get {
+                if (this._config is TC config) {
+                    return config;
+                }
+
+                config = new TC();
+                return config;
+            }
+        }
+
         /// <inheritdoc />
-        public abstract void Configure(Dictionary<int, object> config);
+        public virtual void Configure(IMotorConfig config) =>
+            this._config = config;
 
         /// <inheritdoc />
         public void FullReverse() => this._throttle = -1;

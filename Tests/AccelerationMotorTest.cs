@@ -8,7 +8,6 @@
 // ---------------------------------------------------------------------------
 
 using System.Collections;
-using System.Collections.Generic;
 using eidng8.SpaceFlight.Objects.Dynamic.Motors;
 using NUnit.Framework;
 using UnityEngine;
@@ -26,12 +25,12 @@ namespace eidng8.SpaceFlight.Tests
         [SetUp]
         public void Setup()
         {
-            Dictionary<int, object> config = new Dictionary<int, object> {
-                [(int)AccelerationMotorAttributes.MaxSpeed] = 100f,
-                [(int)AccelerationMotorAttributes.MaxTurn] = this._maxTurn,
-                [(int)AccelerationMotorAttributes.MaxAcceleration] = 10f,
-                [(int)AccelerationMotorAttributes.MaxDeceleration] = 10f,
-                [(int)AccelerationMotorAttributes.Rotation] = this._roll
+            AccelerationMotorConfig config = new AccelerationMotorConfig {
+                MaxSpeed = 100f,
+                MaxTurn = this._maxTurn,
+                MaxAcceleration = 10f,
+                MaxDeceleration = 10f,
+                Rotation = this._roll
             };
             this._motor = new AccelerationMotor(config);
         }

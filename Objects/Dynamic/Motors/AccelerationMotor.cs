@@ -7,62 +7,16 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
 {
-    /// <summary><see cref="AccelerationMotor" /> configuration attributes.</summary>
-    public enum AccelerationMotorAttributes
-    {
-        /// <summary>Maximum speed limit. Value type is <c>float</c>.</summary>
-        MaxSpeed,
-
-        /// <summary>Maximum rotation speed. Value type is <c>float</c>.</summary>
-        MaxTurn,
-
-        /// <summary>
-        /// Full throttle forward acceleration value. Value type is
-        /// <c>float</c>.
-        /// </summary>
-        MaxAcceleration,
-
-        /// <summary>
-        /// Full reverse acceleration value. Value type is
-        /// <c>float</c>.
-        /// </summary>
-        MaxDeceleration,
-
-        /// <summary>
-        /// Current rotation quaternion. Value type is
-        /// <c>Quaternion</c>.
-        /// </summary>
-        Rotation
-    }
-
-
     /// <inheritdoc />
     /// <remarks>A motor that works on constant acceleration.</remarks>
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class AccelerationMotor : ThrottledMotor
+    public class AccelerationMotor : ThrottledMotor<AccelerationMotorConfig>
     {
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once MemberCanBePrivate.Global
-        protected float _maxAcceleration;
-
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once MemberCanBePrivate.Global
-        protected float _maxDeceleration;
-
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once MemberCanBePrivate.Global
-        protected float _maxSpeed;
-
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once MemberCanBePrivate.Global
-        protected float _maxTurn;
-
         // ReSharper disable once InconsistentNaming
         // ReSharper disable once MemberCanBePrivate.Global
         protected Quaternion _roll;
@@ -72,67 +26,21 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         protected float _velocity;
 
         /// <inheritdoc />
-        public AccelerationMotor(Dictionary<int, object> config) :
+        public AccelerationMotor(AccelerationMotorConfig config) :
             base(config) { }
 
         /// <inheritdoc />
         public override float Acceleration =>
-            (this.Throttle < 0 ? this._maxDeceleration : this._maxAcceleration)
+            (this.Throttle < 0
+                ? this.Config.MaxDeceleration
+                : this.Config.MaxAcceleration)
             * this.Throttle;
 
         /// <inheritdoc />
-        public override void Configure(Dictionary<int, object> config)
+        public override void Configure(IMotorConfig config)
         {
-            object v;
-            this._maxSpeed = 100;
-            if (config.TryGetValue(
-                (int)AccelerationMotorAttributes.MaxSpeed,
-                out v
-            )) {
-                if (v is float f) {
-                    this._maxSpeed = f;
-                }
-            }
-
-            this._maxTurn = 10;
-            if (config.TryGetValue(
-                (int)AccelerationMotorAttributes.MaxTurn,
-                out v
-            )) {
-                if (v is float f) {
-                    this._maxTurn = f;
-                }
-            }
-
-            this._maxAcceleration = 10;
-            if (config.TryGetValue(
-                (int)AccelerationMotorAttributes.MaxAcceleration,
-                out v
-            )) {
-                if (v is float f) {
-                    this._maxAcceleration = f;
-                }
-            }
-
-            this._maxDeceleration = 10;
-            if (config.TryGetValue(
-                (int)AccelerationMotorAttributes.MaxDeceleration,
-                out v
-            )) {
-                if (v is float f) {
-                    this._maxDeceleration = f;
-                }
-            }
-
-            this._roll = Quaternion.identity;
-            if (config.TryGetValue(
-                (int)AccelerationMotorAttributes.Rotation,
-                out v
-            )) {
-                if (v is Quaternion f) {
-                    this._roll = f;
-                }
-            }
+            base.Configure(config);
+            this._roll = this.Config.Rotation;
         }
 
         /// <inheritdoc />
@@ -142,7 +50,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// <inheritdoc />
         /// <returns>The rotation delta.</returns>
         public override float GenerateTorque(float deltaTime) =>
-            this._maxTurn * deltaTime;
+            this.Config.MaxTurn * deltaTime;
 
         /// <summary>Returns the next rotation quaternion in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
@@ -168,7 +76,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             this._velocity = Mathf.Clamp(
                 this._velocity + this.Acceleration * deltaTime,
                 0,
-                this._maxSpeed
+                this.Config.MaxSpeed
             );
             return this._velocity;
         }

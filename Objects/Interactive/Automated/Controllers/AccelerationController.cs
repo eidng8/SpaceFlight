@@ -7,7 +7,6 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using eidng8.SpaceFlight.Objects.Dynamic.Motors;
 using UnityEngine;
 
@@ -85,15 +84,12 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
 
         protected void OnEnable()
         {
-            Dictionary<int, object> config = new Dictionary<int, object> {
-                [(int)AccelerationMotorAttributes.MaxTurn] = this.maxTurn,
-                [(int)AccelerationMotorAttributes.MaxSpeed] = this.maxSpeed,
-                [(int)AccelerationMotorAttributes.MaxAcceleration] =
-                    this.maxAcceleration,
-                [(int)AccelerationMotorAttributes.MaxDeceleration] =
-                    this.maxDeceleration,
-                [(int)AccelerationMotorAttributes.Rotation] =
-                    this.transform.rotation
+            AccelerationMotorConfig config = new AccelerationMotorConfig {
+                MaxTurn = this.maxTurn,
+                MaxSpeed = this.maxSpeed,
+                MaxAcceleration = this.maxAcceleration,
+                MaxDeceleration = this.maxDeceleration,
+                Rotation = this.transform.rotation
             };
             this.Motor = new AccelerationMotor(config);
         }

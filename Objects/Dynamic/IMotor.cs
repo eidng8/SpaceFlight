@@ -4,7 +4,6 @@
 // </copyright>
 // ---------------------------------------------------------------------------
 
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -31,7 +30,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         /// A <c>Dictionary</c> of configuration
         /// attributes.
         /// </param>
-        void Configure(Dictionary<int, object> config);
+        void Configure(IMotorConfig config);
 
         /// <summary>
         /// Convenient method to apply maximum reverse <see cref="Throttle" />.
