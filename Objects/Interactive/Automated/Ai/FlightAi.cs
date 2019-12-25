@@ -27,7 +27,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
         private Transform _target;
 
         /// <inheritdoc />
-        public virtual bool HasTarget { get; protected set; }
+        public bool HasTarget { get; private set; }
 
         /// <inheritdoc />
         public Transform Target {
