@@ -25,8 +25,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
         [Tooltip("The distance to keep from target.")]
         public float safeDistance = 5;
 
-        /// <summary>Determine acceleration throttle.</summary>
-        protected override void GenerateThrust()
+        /// <inheritdoc />
+        protected override void DetermineThrottle()
         {
             if (!this.HasTarget) {
                 return;
@@ -47,20 +47,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 
             // Always use full throttle.
             this.Control.FullThrottle();
-        }
-
-        /// <summary>
-        /// Tells <see cref="AccelerationController" /> to face
-        /// target.
-        /// </summary>
-        protected override void GenerateTorque()
-        {
-            if (!this.HasTarget) {
-                return;
-            }
-
-            Vector3 dir = this.Target.position - this.transform.position;
-            this.Control.TurnTo(dir);
         }
 
         /// <summary>
@@ -105,6 +91,18 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             // Can you see when we start decelerating now? Yes, right in the
             // middle.
             return v * t / 2 >= d;
+        }
+
+        /// <inheritdoc />
+        /// <summary>This method calculates the <c>Vector3</c> towards target.</summary>
+        protected override void TurnToTarget()
+        {
+            if (!this.HasTarget) {
+                return;
+            }
+
+            Vector3 dir = this.Target.position - this.transform.position;
+            this.Control.TurnTo(dir);
         }
     }
 }

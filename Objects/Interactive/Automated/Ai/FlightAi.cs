@@ -14,6 +14,10 @@ using UnityEngine;
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
 {
     /// <inheritdoc cref="IFlightAi" />
+    /// <typeparam name="TC">
+    /// The type of <see cref="IFlightController" /> implementation to work
+    /// with.
+    /// </typeparam>
     public abstract class FlightAi<TC> : MonoBehaviour, IFlightAi
     {
         private TC _control;
@@ -49,15 +53,18 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             }
         }
 
+        /// <summary>
+        /// Calculates the appropriate throttle, and applies to the attached
+        /// flight controller. This method <i>must</i> directly sets the
+        /// controller's <c>Throttle</c>.
+        /// </summary>
+        protected abstract void DetermineThrottle();
+
         protected void FixedUpdate()
         {
-            this.GenerateTorque();
-            this.GenerateThrust();
+            this.TurnToTarget();
+            this.DetermineThrottle();
         }
-
-        protected abstract void GenerateThrust();
-
-        protected abstract void GenerateTorque();
 
         protected virtual void OnEnable()
         {
@@ -86,5 +93,12 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
                 this.OnSelectTarget
             );
         }
+
+        /// <summary>
+        /// Calculates the appropriate rotation, and applies to the attached
+        /// flight controller. This method <i>must</i> directly calls the
+        /// controller's <c>TurnTo()</c> method.
+        /// </summary>
+        protected abstract void TurnToTarget();
     }
 }
