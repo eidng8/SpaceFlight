@@ -11,7 +11,7 @@ using eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers;
 using UnityEngine;
 
 
-namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
+namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
 {
     /// <inheritdoc />
     /// <remarkes>
@@ -19,7 +19,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
     /// </remarkes>
     [RequireComponent(typeof(AccelerationController))]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class AccelerationAi : FlightAi<AccelerationController>
+    public class AccelerationAi : PilotAi<AccelerationController>
     {
         /// <summary>The distance to keep from target.</summary>
         [Tooltip("The distance to keep from target.")]

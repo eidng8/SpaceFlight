@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// <copyright file="FlightAi.cs" company="eidng8">
+// <copyright file="PilotAi.cs" company="eidng8">
 //      GPLv3
 // </copyright>
 // <summary>
@@ -8,17 +8,18 @@
 // ---------------------------------------------------------------------------
 
 using eidng8.SpaceFlight.Events;
+using eidng8.SpaceFlight.Objects.Interactive.Automated;
 using UnityEngine;
 
 
-namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
+namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
 {
     /// <inheritdoc cref="IFlightAi" />
     /// <typeparam name="TC">
     /// The type of <see cref="IFlightController" /> implementation to work
     /// with.
     /// </typeparam>
-    public abstract class FlightAi<TC> : MonoBehaviour, IFlightAi
+    public abstract class PilotAi<TC> : MonoBehaviour, IFlightAi
         where TC : IFlightController
     {
         private TC _control;

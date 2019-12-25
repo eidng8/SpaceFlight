@@ -7,10 +7,11 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using eidng8.SpaceFlight.Objects.Interactive.Automated;
 using UnityEngine;
 
 
-namespace eidng8.SpaceFlight.Objects.Interactive.Automated
+namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
 {
     /// <summary>
     /// Logic that makes objects move. Sub-class of this interface are
