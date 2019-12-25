@@ -11,8 +11,8 @@ using UnityEngine;
 namespace eidng8.SpaceFlight.Objects.Dynamic
 {
     /// <summary>
-    /// Motors are representation of propulsion systems. Every flight controller has to
-    /// have exactly one motor.
+    /// Motors are representation of propulsion systems. Every flight
+    /// controller has to have exactly one motor.
     /// </summary>
     public interface IMotor
     {
@@ -23,10 +23,14 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         float Throttle { get; set; }
 
         /// <summary>
-        /// Configures the motor. Different types of motors have different configuration
-        /// attributes. Please consult documentation of the motor you are using.
+        /// Configures the motor. Different types of motors have different
+        /// configuration attributes. Please consult documentation of the motor
+        /// you are using.
         /// </summary>
-        /// <param name="config">A <c>Dictionary</c> of configuration attributes.</param>
+        /// <param name="config">
+        /// A <c>Dictionary</c> of configuration
+        /// attributes.
+        /// </param>
         void Configure(Dictionary<int, object> config);
 
         /// <summary>
@@ -42,11 +46,11 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         /// </summary>
         void FullThrottle();
 
-        /// <summary>Current rotation thrust value.</summary>
-        float GetRollThrust(float deltaTime);
-
         /// <summary>Current forward thrust value.</summary>
-        float GetThrust();
+        float GenerateThrust();
+
+        /// <summary>Current rotation thrust value.</summary>
+        float GenerateTorque(float deltaTime);
 
         /// <summary>Turn to face the <c>target</c>.</summary>
         /// <param name="target"></param>

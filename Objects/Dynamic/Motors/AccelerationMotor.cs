@@ -135,6 +135,15 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             }
         }
 
+        /// <inheritdoc />
+        /// <returns>The acceleration value.</returns>
+        public override float GenerateThrust() => this.Acceleration;
+
+        /// <inheritdoc />
+        /// <returns>The rotation delta.</returns>
+        public override float GenerateTorque(float deltaTime) =>
+            this._maxTurn * deltaTime;
+
         /// <summary>Returns the next rotation quaternion in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
         /// <returns></returns>
@@ -145,18 +154,11 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
             }
 
             Quaternion look = Quaternion.LookRotation(this._turnTarget);
-            float thrust = this.GetRollThrust(deltaTime);
+            float thrust = this.GenerateTorque(deltaTime);
             this._roll = Quaternion.Lerp(this._roll, look, thrust);
 
             return this._roll;
         }
-
-        /// <inheritdoc />
-        public override float GetRollThrust(float deltaTime) =>
-            this._maxTurn * deltaTime;
-
-        /// <summary>Current acceleration value.</summary>
-        public override float GetThrust() => this.Acceleration;
 
         /// <summary>Calculates the velocity value in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>

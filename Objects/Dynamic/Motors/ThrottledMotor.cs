@@ -51,10 +51,10 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         public void FullThrottle() => this._throttle = 1;
 
         /// <inheritdoc />
-        public abstract float GetRollThrust(float deltaTime);
+        public abstract float GenerateThrust();
 
         /// <inheritdoc />
-        public abstract float GetThrust();
+        public abstract float GenerateTorque(float deltaTime);
 
         /// <inheritdoc />
         public virtual void TurnTo(Vector3 target)
