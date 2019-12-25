@@ -7,7 +7,6 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using eidng8.SpaceFlight.Events;
 using eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers;
 using UnityEngine;
 
@@ -20,44 +19,14 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
     /// </remarkes>
     [RequireComponent(typeof(AccelerationController))]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class AccelerationAi : FlightAi
+    public class AccelerationAi : FlightAi<AccelerationController>
     {
         /// <summary>The distance to keep from target.</summary>
         [Tooltip("The distance to keep from target.")]
         public float safeDistance = 5;
 
-        // ReSharper disable once MemberCanBePrivate.Global
-        // ReSharper disable once InconsistentNaming
-        protected AccelerationController _control;
-
-        // ReSharper disable once MemberCanBePrivate.Global
-        // ReSharper disable once InconsistentNaming
-        protected bool _controlAttached;
-
-        // ReSharper disable once MemberCanBePrivate.Global
-        // ReSharper disable once InconsistentNaming
-        protected bool _listeningEvents;
-
-        /// <summary>
-        /// Reference to the attached
-        /// <see cref="AccelerationController" />.
-        /// </summary>
-        protected virtual AccelerationController Control {
-            get {
-                if (!this._controlAttached) {
-                    this._control = this.GetComponent<AccelerationController>();
-                }
-
-                return this._control;
-            }
-            set {
-                this._control = value;
-                this._controlAttached = true;
-            }
-        }
-
         /// <summary>Determine acceleration throttle.</summary>
-        protected virtual void DetermineThrottle()
+        protected override void GenerateThrust()
         {
             if (!this.HasTarget) {
                 return;
@@ -80,33 +49,18 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             this.Control.FullThrottle();
         }
 
-        protected void FixedUpdate()
+        /// <summary>
+        /// Tells <see cref="AccelerationController" /> to face
+        /// target.
+        /// </summary>
+        protected override void GenerateTorque()
         {
-            this.TurnToTarget();
-            this.DetermineThrottle();
-        }
-
-
-        protected virtual void OnEnable()
-        {
-            if (this._listeningEvents) {
+            if (!this.HasTarget) {
                 return;
             }
 
-            EventManager.Mgr.OnUserEvent(
-                UserEvents.Select,
-                this.OnSelectTarget
-            );
-            this._listeningEvents = true;
-        }
-
-        /// <summary>
-        /// The objected selected event handler. Sets <c>Target</c> to the
-        /// selected object.
-        /// </summary>
-        protected virtual void OnSelectTarget(ExtendedEventArgs arg0)
-        {
-            this.Target = arg0.Source.transform;
+            Vector3 dir = this.Target.position - this.transform.position;
+            this.Control.TurnTo(dir);
         }
 
         /// <summary>
@@ -151,20 +105,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Ai
             // Can you see when we start decelerating now? Yes, right in the
             // middle.
             return v * t / 2 >= d;
-        }
-
-        /// <summary>
-        /// Tells <see cref="AccelerationController" /> to face
-        /// target.
-        /// </summary>
-        protected virtual void TurnToTarget()
-        {
-            if (!this.HasTarget) {
-                return;
-            }
-
-            Vector3 dir = this.Target.position - this.transform.position;
-            this.Control.TurnTo(dir);
         }
     }
 }
