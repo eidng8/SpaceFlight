@@ -1,26 +1,29 @@
 ﻿using UnityEngine;
 
-namespace eidng8.SpaceFlight.Objects.Dynamic {
-    [RequireComponent(typeof(Camera))]
+
+namespace eidng8.SpaceFlight.Objects.Dynamic
+{
     public class CameraControl : MonoBehaviour
     {
-        private Camera cam;
+        public Rigidbody target;
 
-        // Start is called before the first frame update
-        void Awake()
+        private void Follow()
         {
-            this.cam = this.GetComponent<Camera>();
+            Transform me = this.transform;
+            Quaternion dir = Quaternion.LookRotation(
+                this.target.position - me.position
+            );
+            this.transform.rotation = Quaternion.Lerp(
+                me.rotation,
+                dir,
+                Time.deltaTime
+            );
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            if (Input.GetMouseButtonDown(0)) {
-                RaycastHit hit;
-                Ray ray = this.cam.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 100)) {
-                }
-            }
+            this.Follow();
         }
     }
 }
