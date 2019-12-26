@@ -8,6 +8,7 @@
 // ---------------------------------------------------------------------------
 
 using eidng8.SpaceFlight.Objects.Dynamic;
+using eidng8.SpaceFlight.Objects.Interactive.Pilot;
 using UnityEngine;
 
 
@@ -21,20 +22,46 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
     /// motions by force and acceleration need to work with completely
     /// different sets of variables applied to the object.
     /// </remarks>
-    public abstract class FlightController<TM>
+    public abstract class FlightController
+        <TMotor, TMotorConfig, TPilot, TPilotConfig>
         : AutomatedController, IFlightController
-        where TM : IMotor
+        where TMotor : IMotor, new()
+        where TMotorConfig : IMotorConfig
+        where TPilot : IPilot, new()
+        where TPilotConfig : IPilotConfig
     {
+        public TMotorConfig motorConfig;
+
+        public TPilotConfig pilotConfig;
+
         /// <summary>Reference to a IMotor concrete class.</summary>
-        protected TM Motor;
+        protected TMotor Motor;
 
-        /// <inheritdoc />
-        public virtual float Acceleration => this.Motor.Acceleration;
+        protected TPilot Pilot;
 
-        /// <inheritdoc />
-        public virtual float Throttle {
-            get => this.Motor.Throttle;
-            set => this.Motor.Throttle = value;
+        protected virtual void Awake()
+        {
+            this.Motor = new TMotor();
+            this.ConfigureMotor();
+            this.Pilot = new TPilot();
+            this.ConfigurePilot();
+        }
+
+        protected virtual void ConfigureMotor()
+        {
+            this.Motor.Configure(this.motorConfig);
+        }
+
+        protected virtual void ConfigurePilot()
+        {
+            this.Pilot.Configure(this.pilotConfig);
+            this.Pilot.TakeControlOfMotor(this.Motor);
+            this.Pilot.Awake();
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            this.Pilot.FixedUpdate();
         }
 
         /// <inheritdoc />
@@ -122,7 +149,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         public virtual float EstimatedArrival(float distance)
         {
             float v = this.Velocity;
-            float a = this.Acceleration;
+            float a = this.Motor.Acceleration;
 
             //                         __________
             // We first calculate the √ 4ad + v²  part.
@@ -148,15 +175,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         }
 
         /// <inheritdoc />
-        public virtual void FullReverse() => this.Motor.FullReverse();
-
-        /// <inheritdoc />
-        public virtual void FullStop() => this.Motor.FullStop();
-
-        /// <inheritdoc />
-        public virtual void FullThrottle() => this.Motor.FullThrottle();
-
-        /// <inheritdoc />
         public virtual bool IsFacing(Vector3 target, float tolerance = 45)
         {
             Transform me = this.transform;
@@ -166,8 +184,5 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
             return ang >= -tolerance && ang <= tolerance
                    || ang >= 360 - tolerance;
         }
-
-        /// <inheritdoc />
-        public virtual void TurnTo(Vector3 target) => this.Motor.TurnTo(target);
     }
 }

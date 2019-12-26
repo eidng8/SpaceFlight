@@ -17,30 +17,27 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class AccelerationMotor : ThrottledMotor<AccelerationMotorConfig>
     {
-        // ReSharper disable once InconsistentNaming
         // ReSharper disable once MemberCanBePrivate.Global
-        protected Quaternion _roll;
+        protected Vector3 TurnTarget;
 
-        // ReSharper disable once InconsistentNaming
         // ReSharper disable once MemberCanBePrivate.Global
-        protected float _velocity;
+        protected Quaternion Roll;
 
-        /// <inheritdoc />
-        public AccelerationMotor(AccelerationMotorConfig config) :
-            base(config) { }
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected float Velocity;
 
         /// <inheritdoc />
         public override float Acceleration =>
             (this.Throttle < 0
-                ? this.Config.MaxDeceleration
-                : this.Config.MaxAcceleration)
+                ? this.Config.maxDeceleration
+                : this.Config.maxAcceleration)
             * this.Throttle;
 
         /// <inheritdoc />
         public override void Configure(IMotorConfig config)
         {
             base.Configure(config);
-            this._roll = this.Config.Rotation;
+            this.Roll = this.Config.rotation;
         }
 
         /// <inheritdoc />
@@ -50,22 +47,22 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// <inheritdoc />
         /// <returns>The rotation delta.</returns>
         public override float GenerateTorque(float deltaTime) =>
-            this.Config.MaxTurn * deltaTime;
+            this.Config.maxTurn * deltaTime;
 
         /// <summary>Returns the next rotation quaternion in <c>deltaTime</c>.</summary>
         /// <param name="deltaTime"></param>
         /// <returns></returns>
         public virtual Quaternion GetRoll(float deltaTime)
         {
-            if (this._turnTarget == Vector3.zero) {
+            if (this.TurnTarget == Vector3.zero) {
                 return Quaternion.identity;
             }
 
-            Quaternion look = Quaternion.LookRotation(this._turnTarget);
+            Quaternion look = Quaternion.LookRotation(this.TurnTarget);
             float thrust = this.GenerateTorque(deltaTime);
-            this._roll = Quaternion.Lerp(this._roll, look, thrust);
+            this.Roll = Quaternion.Lerp(this.Roll, look, thrust);
 
-            return this._roll;
+            return this.Roll;
         }
 
         /// <summary>Calculates the velocity value in <c>deltaTime</c>.</summary>
@@ -73,12 +70,19 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// <returns></returns>
         public virtual float GetVelocity(float deltaTime)
         {
-            this._velocity = Mathf.Clamp(
-                this._velocity + this.Acceleration * deltaTime,
+            this.Velocity = Mathf.Clamp(
+                this.Velocity + this.Acceleration * deltaTime,
                 0,
-                this.Config.MaxSpeed
+                this.Config.maxSpeed
             );
-            return this._velocity;
+            return this.Velocity;
+        }
+
+        /// <summary>Turn to face the <c>target</c>.</summary>
+        /// <param name="target"></param>
+        public virtual void TurnTo(Vector3 target)
+        {
+            this.TurnTarget = target;
         }
     }
 }

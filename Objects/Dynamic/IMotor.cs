@@ -4,9 +4,6 @@
 // </copyright>
 // ---------------------------------------------------------------------------
 
-using UnityEngine;
-
-
 namespace eidng8.SpaceFlight.Objects.Dynamic
 {
     /// <summary>
@@ -17,9 +14,6 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
     {
         /// <summary>Current acceleration value.</summary>
         float Acceleration { get; }
-
-        /// <summary>Current throttle value.</summary>
-        float Throttle { get; set; }
 
         /// <summary>
         /// Configures the motor. Different types of motors have different
@@ -32,27 +26,19 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         /// </param>
         void Configure(IMotorConfig config);
 
-        /// <summary>
-        /// Convenient method to apply maximum reverse <see cref="Throttle" />.
-        /// </summary>
+        /// <summary>Convenient method to apply maximum reverse thrust.</summary>
         void FullReverse();
 
-        /// <summary>Convenient method to apply zero <see cref="Throttle" />.</summary>
+        /// <summary>Convenient method to apply zero thrust.</summary>
         void FullStop();
 
-        /// <summary>
-        /// Convenient method to apply maximum forward <see cref="Throttle" />.
-        /// </summary>
-        void FullThrottle();
+        /// <summary>Convenient method to apply maximum forward thrust.</summary>
+        void FullForward();
 
         /// <summary>Current forward thrust value.</summary>
         float GenerateThrust();
 
         /// <summary>Current rotation thrust value.</summary>
         float GenerateTorque(float deltaTime);
-
-        /// <summary>Turn to face the <c>target</c>.</summary>
-        /// <param name="target"></param>
-        void TurnTo(Vector3 target);
     }
 }

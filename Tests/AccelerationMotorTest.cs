@@ -26,13 +26,14 @@ namespace eidng8.SpaceFlight.Tests
         public void Setup()
         {
             AccelerationMotorConfig config = new AccelerationMotorConfig {
-                MaxSpeed = 100f,
-                MaxTurn = this._maxTurn,
-                MaxAcceleration = 10f,
-                MaxDeceleration = 10f,
-                Rotation = this._roll
+                maxSpeed = 100f,
+                maxTurn = this._maxTurn,
+                maxAcceleration = 10f,
+                maxDeceleration = 10f,
+                rotation = this._roll
             };
-            this._motor = new AccelerationMotor(config);
+            this._motor = new AccelerationMotor();
+            this._motor.Configure(config);
         }
 
         [Test]
@@ -52,7 +53,7 @@ namespace eidng8.SpaceFlight.Tests
         [Test]
         public void TestFullThrottleShouldIncreaseThrust()
         {
-            this._motor.FullThrottle();
+            this._motor.FullForward();
             Assert.AreEqual(10, this._motor.GenerateThrust());
         }
 

@@ -7,6 +7,7 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using eidng8.SpaceFlight.Objects.Dynamic;
 using UnityEngine;
 
 
@@ -24,5 +25,29 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
 
         /// <summary>Reference to the selected target object.</summary>
         Transform Target { get; set; }
+
+        /// <summary>For use with Unity's <c>Awake</c> event.</summary>
+        void Awake();
+
+        /// <summary>
+        /// Configures the pilot. Different types of pilots have different
+        /// configuration attributes. Please consult documentation of the pilot
+        /// you are using.
+        /// </summary>
+        /// <param name="config">
+        /// A <see cref="IPilotConfig" /> of configuration
+        /// attributes.
+        /// </param>
+        void Configure(IPilotConfig config);
+
+        /// <summary>For use with Unity's <c>FixedUpdate</c> event.</summary>
+        void FixedUpdate();
+
+        /// <summary>
+        /// Stores the motor reference for later use. Implementations of this
+        /// interface directly interact with this motor instance.
+        /// </summary>
+        /// <param name="motor"></param>
+        void TakeControlOfMotor(IMotor motor);
     }
 }

@@ -8,19 +8,22 @@
 // ---------------------------------------------------------------------------
 
 using eidng8.SpaceFlight.Events;
-using eidng8.SpaceFlight.Objects.Interactive.Automated;
+using eidng8.SpaceFlight.Objects.Dynamic;
 using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
 {
-    public abstract class Pilot<TC> : MonoBehaviour, IPilot
-        where TC : IFlightController
+    public abstract class Pilot<TConfig, TMotor> : IPilot
+        where TConfig : IPilotConfig
+        where TMotor : IMotor
     {
-        private TC _control;
-        private bool _controlAttached;
         private bool _listeningEvents;
         private Transform _target;
+
+        protected TConfig Config;
+
+        protected TMotor Motor;
 
         /// <inheritdoc />
         public bool HasTarget { get; private set; }
@@ -34,31 +37,25 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
             }
         }
 
-        /// <summary>
-        /// Reference to the attached <see cref="IFlightController" />
-        /// implementation.
-        /// </summary>
-        protected TC Control {
-            get {
-                if (this._controlAttached) {
-                    return this._control;
-                }
-
-                this._control = this.GetComponent<TC>();
-                this._controlAttached = true;
-                return this._control;
-            }
-        }
-
-        protected virtual void OnEnable()
+        public virtual void Awake()
         {
-            if (this._listeningEvents) {
-                return;
+            if (!this._listeningEvents) {
+                this.RegisterEvents();
+                this._listeningEvents = true;
             }
-
-            this.RegisterEvents();
-            this._listeningEvents = true;
         }
+
+        /// <inheritdoc />
+        public void Configure(IPilotConfig config)
+        {
+            this.Config = (TConfig)config;
+        }
+
+        /// <inheritdoc />
+        public abstract void FixedUpdate();
+
+        public void TakeControlOfMotor(IMotor motor) =>
+            this.Motor = (TMotor)motor;
 
         /// <summary>
         /// The objected selected event handler. Sets <c>Target</c> to the

@@ -7,6 +7,7 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using eidng8.SpaceFlight.Objects.Dynamic.Motors;
 using eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers;
 using UnityEngine;
 
@@ -17,14 +18,11 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
     /// <remarkes>
     /// This component works with <see cref="AccelerationController" />.
     /// </remarkes>
-    [RequireComponent(typeof(AccelerationController))]
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-    public class AccelerationAi : PilotAi<AccelerationController>
+    public class AccelerationAi
+        : PilotAi<AccelerationAiConfig, AccelerationMotor,
+            AccelerationController>
     {
-        /// <summary>The distance to keep from target.</summary>
-        [Tooltip("The distance to keep from target.")]
-        public float safeDistance = 5;
-
         /// <inheritdoc />
         protected override void DetermineThrottle()
         {
@@ -35,18 +33,18 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
             // If we start accelerating while facing away from the target,
             // we'll make a bit of roundabout. So we don't do this.
             if (!this.Control.IsFacing(this.Target.position)) {
-                this.Control.FullStop();
+                this.Motor.FullStop();
                 return;
             }
 
             // We've arrived at a distance that needs to slow down.
             if (this.ShouldBrake()) {
-                this.Control.FullReverse();
+                this.Motor.FullReverse();
                 return;
             }
 
             // Always use full throttle.
-            this.Control.FullThrottle();
+            this.Motor.FullForward();
         }
 
         /// <summary>
@@ -55,9 +53,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
         /// </summary>
         protected virtual bool ShouldBrake()
         {
-            AccelerationController control = this.Control;
-            float v = control.Velocity;
-            float a = control.maxDeceleration;
+            float v = this.Control.Velocity;
+            float a = this.Motor.GetConfig().maxDeceleration;
 
             // We calculate how much time is needed for the speed to reach `v`
             // with acceleration `a`. From deceleration point of view, this
@@ -65,8 +62,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
             float t = v / a;
 
             // Remember to take safe distance into account.
-            float d = control.DistanceTo(this.Target.position)
-                      - this.safeDistance;
+            float d = this.Control.DistanceTo(this.Target.position)
+                      - this.Config.safeDistance;
 
             // Why:
             // => vt=D
@@ -101,8 +98,9 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
                 return;
             }
 
-            Vector3 dir = this.Target.position - this.transform.position;
-            this.Control.TurnTo(dir);
+            Vector3 dir =
+                this.Target.position - this.Control.transform.position;
+            this.Motor.TurnTo(dir);
         }
     }
 }

@@ -24,12 +24,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
     /// </summary>
     public interface IFlightController : IObjectController
     {
-        /// <summary>Returns the current acceleration value.</summary>
-        float Acceleration { get; }
-
-        /// <summary>Current thrust value.</summary>
-        float Throttle { get; set; }
-
         /// <summary>Returns the current velocity magnitude.</summary>
         float Velocity { get; }
 
@@ -44,15 +38,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// </summary>
         float EstimatedArrival(float distance);
 
-        /// <summary>Full throttle backward, or decelerate.</summary>
-        void FullReverse();
-
-        /// <summary>Completely turn off thrust.</summary>
-        void FullStop();
-
-        /// <summary>Full throttle forward.</summary>
-        void FullThrottle();
-
         /// <summary>
         /// Determine if we are facing the target. Facing doesn't mean we are
         /// directly facing it, we can have around ±45º buffer by default.
@@ -61,9 +46,5 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
         /// <param name="tolerance"></param>
         /// <returns></returns>
         bool IsFacing(Vector3 target, float tolerance = 45);
-
-        /// <summary>Rotate the object to face the given target.</summary>
-        /// <param name="target"></param>
-        void TurnTo(Vector3 target);
     }
 }

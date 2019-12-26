@@ -13,7 +13,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
             Quaternion dir = Quaternion.LookRotation(
                 this.target.position - me.position
             );
-            this.transform.rotation = Quaternion.Lerp(
+            this.transform.rotation = Quaternion.Slerp(
                 me.rotation,
                 dir,
                 Time.deltaTime

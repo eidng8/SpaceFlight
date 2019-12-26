@@ -7,19 +7,32 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using eidng8.SpaceFlight.Objects.Dynamic;
 using eidng8.SpaceFlight.Objects.Interactive.Automated;
 
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
 {
     /// <inheritdoc cref="IPilotAi" />
-    /// <typeparam name="TC">
-    /// The type of <see cref="IFlightController" /> implementation to work
-    /// with.
+    /// <typeparam name="TConfig"></typeparam>
+    /// <typeparam name="TMotor"></typeparam>
+    /// <typeparam name="TControl">
+    /// Unlike controllers manned by players, who interprets the game flow
+    /// by human sense. AI pilots have to obtain critical data from the
+    /// attached flight control. Hence, we need a reference to it.
     /// </typeparam>
-    public abstract class PilotAi<TC> : Pilot<TC>, IPilotAi
-        where TC : IFlightController
+    public abstract class PilotAi<TConfig, TMotor, TControl>
+        : Pilot<TConfig, TMotor>
+        where TConfig : IPilotConfig, new()
+        where TMotor : IMotor
+        where TControl : IFlightController
     {
+        /// <summary>
+        /// Reference to the attached <see cref="IFlightController" />
+        /// implementation.
+        /// </summary>
+        public TControl Control { protected get; set; }
+
         /// <summary>
         /// Calculates the appropriate throttle, and applies to the attached
         /// flight controller. This method <i>must</i> directly sets the
@@ -27,7 +40,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
         /// </summary>
         protected abstract void DetermineThrottle();
 
-        protected void FixedUpdate()
+        public override void FixedUpdate()
         {
             this.TurnToTarget();
             this.DetermineThrottle();
