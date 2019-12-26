@@ -38,6 +38,7 @@ namespace eidng8.SpaceFlight.Objects.Dynamic.Motors
         /// the motor instance. The actual rotation is not updated afterward,
         /// and has no relation to this configuration property.
         /// </summary>
+        [HideInInspector]
         public Quaternion rotation;
     }
 }

@@ -25,7 +25,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
     public abstract class FlightController
         <TMotor, TMotorConfig, TPilot, TPilotConfig>
         : AutomatedController, IFlightController
-        where TMotor : IMotor, new()
+        where TMotor : IMotorBase, new()
         where TMotorConfig : IMotorConfig
         where TPilot : IPilot, new()
         where TPilotConfig : IPilotConfig

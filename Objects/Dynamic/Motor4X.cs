@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// <copyright file="EventChannels.cs" company="eidng8">
+// <copyright file="Motor4X.cs" company="eidng8">
 //      GPLv3
 // </copyright>
 // <summary>
@@ -7,10 +7,13 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using UnityEngine;
+
+
 namespace eidng8.SpaceFlight.Objects.Dynamic
 {
     /// <inheritdoc />
-    public abstract class Motor<TC> : IMotor where TC : IMotorConfig
+    public abstract class Motor4X<TC> : IMotor4X where TC : IMotorConfig
     {
         protected TC Config;
 
@@ -34,7 +37,10 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
         public abstract float GenerateThrust();
 
         /// <inheritdoc />
-        public abstract float GenerateTorque(float deltaTime);
+        public abstract Vector3 GenerateTorque(float deltaTime);
+
+        /// <inheritdoc />
+        public abstract Vector3 GeneratePanThrust(float deltaTime);
 
         public TC GetConfig() => this.Config;
     }

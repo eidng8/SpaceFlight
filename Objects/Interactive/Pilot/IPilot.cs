@@ -48,6 +48,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
         /// interface directly interact with this motor instance.
         /// </summary>
         /// <param name="motor"></param>
-        void TakeControlOfMotor(IMotor motor);
+        void TakeControlOfMotor(IMotorBase motor);
     }
 }

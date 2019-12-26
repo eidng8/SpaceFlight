@@ -8,7 +8,7 @@
 // ---------------------------------------------------------------------------
 
 using eidng8.SpaceFlight.Objects.Dynamic.Motors;
-using eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai;
+using eidng8.SpaceFlight.Objects.Interactive.Pilot;
 using UnityEngine;
 
 
@@ -20,12 +20,14 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
     /// Physics used: Motion with constant acceleration.
     /// </remarks>
     [RequireComponent(typeof(Rigidbody))]
-    public abstract class AccelerationController
+    public abstract class AccelerationController<TPilot, TPilotConfig>
         : FlightController<AccelerationMotor, AccelerationMotorConfig,
-                AccelerationAi, AccelerationAiConfig>,
+                TPilot, TPilotConfig>,
             IThrottledFlightController
+        where TPilot : IPilot, new()
+        where TPilotConfig : IPilotConfig
     {
-        /// <summary>Current throttle value.</summary>
+        /// <inheritdoc />
         public virtual float Throttle {
             get => this.Motor.Throttle;
             set => this.Motor.Throttle = value;

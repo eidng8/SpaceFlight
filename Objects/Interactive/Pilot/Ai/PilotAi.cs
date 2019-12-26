@@ -24,7 +24,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
     public abstract class PilotAi<TConfig, TMotor, TControl>
         : Pilot<TConfig, TMotor>
         where TConfig : IPilotConfig, new()
-        where TMotor : IMotor
+        where TMotor : IMotorBase
         where TControl : IFlightController
     {
         /// <summary>

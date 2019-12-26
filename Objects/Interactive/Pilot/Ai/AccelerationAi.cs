@@ -16,12 +16,13 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
 {
     /// <inheritdoc />
     /// <remarkes>
-    /// This component works with <see cref="AccelerationController" />.
+    /// This component works with
+    /// <see cref="AccelerationController{TPilot,TPilotConfig}" />.
     /// </remarkes>
     // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class AccelerationAi
         : PilotAi<AccelerationAiConfig, AccelerationMotor,
-            AccelerationController>
+            AccelerationController<AccelerationAi, AccelerationAiConfig>>
     {
         /// <inheritdoc />
         protected override void DetermineThrottle()

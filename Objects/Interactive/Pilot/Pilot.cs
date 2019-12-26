@@ -16,7 +16,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
 {
     public abstract class Pilot<TConfig, TMotor> : IPilot
         where TConfig : IPilotConfig
-        where TMotor : IMotor
+        where TMotor : IMotorBase
     {
         private bool _listeningEvents;
         private Transform _target;
@@ -54,7 +54,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
         /// <inheritdoc />
         public abstract void FixedUpdate();
 
-        public void TakeControlOfMotor(IMotor motor) =>
+        public void TakeControlOfMotor(IMotorBase motor) =>
             this.Motor = (TMotor)motor;
 
         /// <summary>
