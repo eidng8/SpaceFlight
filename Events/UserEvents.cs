@@ -9,7 +9,7 @@
 
 namespace eidng8.SpaceFlight.Events
 {
-    public enum UserEvents : int
+    public enum UserEvents
     {
         Select
     }

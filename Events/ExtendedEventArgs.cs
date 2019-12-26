@@ -10,12 +10,16 @@
 using System;
 using UnityEngine;
 
+
 namespace eidng8.SpaceFlight.Events
 {
     [Serializable]
     public class ExtendedEventArgs : EventArgs
     {
-        public GameObject Source = null;
-        public GameObject Target = null;
+        /// <summary>The object that triggers the event</summary>
+        public GameObject source;
+
+        /// <summary>The object to be acted on.</summary>
+        public GameObject target;
     }
 }

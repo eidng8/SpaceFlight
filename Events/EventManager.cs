@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Object = UnityEngine.Object;
+
 
 namespace eidng8.SpaceFlight.Events
 {
@@ -21,18 +23,19 @@ namespace eidng8.SpaceFlight.Events
 
         private static EventManager _mgr;
 
-        /// <summary>
-        /// The singleton instance of <c>EventManager</c>
-        /// </summary>
+        /// <summary>The singleton instance of <c>EventManager</c></summary>
         public static EventManager Mgr {
             get {
                 if (!EventManager._mgr) {
                     EventManager._mgr =
-                        UnityEngine.Object.FindObjectOfType(typeof(EventManager)) as EventManager;
+                        Object.FindObjectOfType(
+                            typeof(EventManager)
+                        ) as EventManager;
 
                     if (null == EventManager._mgr) {
                         Debug.LogError(
-                            "There needs to be one active EventManger script on a GameObject in your scene.");
+                            "There needs to be one active EventManger script on a GameObject in your scene."
+                        );
                     } else {
                         EventManager._mgr.Init();
                     }
@@ -53,10 +56,16 @@ namespace eidng8.SpaceFlight.Events
         }
 
 
+        /// <summary>Listen on the specified event from channel</summary>
+        /// <param name="channelName"></param>
+        /// <param name="eventName"></param>
+        /// <param name="listener"></param>
+        // ReSharper disable once MemberCanBePrivate.Global
         public void ListenOn(
             EventChannels channelName,
             Enum eventName,
-            UnityAction<ExtendedEventArgs> listener)
+            UnityAction<ExtendedEventArgs> listener
+        )
         {
             Dictionary<Enum, ManagedEvent> ch = this.GetChannel(channelName);
 
@@ -70,10 +79,16 @@ namespace eidng8.SpaceFlight.Events
             }
         }
 
+        /// <summary>Removes the given event listener</summary>
+        /// <param name="channelName"></param>
+        /// <param name="eventName"></param>
+        /// <param name="listener"></param>
+        // ReSharper disable once MemberCanBePrivate.Global
         public void StopListening(
             EventChannels channelName,
             Enum eventName,
-            UnityAction<ExtendedEventArgs> listener)
+            UnityAction<ExtendedEventArgs> listener
+        )
         {
             // Don't call the `Mgr()` property,
             // since we don't want to create an instance,
@@ -88,16 +103,21 @@ namespace eidng8.SpaceFlight.Events
                 return;
             }
 
-            ManagedEvent evt = null;
+            ManagedEvent evt;
             if (ch.TryGetValue(eventName, out evt)) {
                 evt.RemoveListener(listener);
             }
         }
 
+        /// <summary>Triggers the specified event on the channel.</summary>
+        /// <param name="channelName"></param>
+        /// <param name="eventName"></param>
+        /// <param name="args"></param>
         public void TriggerEvent(
             EventChannels channelName,
             Enum eventName,
-            ExtendedEventArgs args)
+            ExtendedEventArgs args
+        )
         {
             Dictionary<Enum, ManagedEvent> ch =
                 this.GetChannel(channelName, false);
@@ -105,29 +125,49 @@ namespace eidng8.SpaceFlight.Events
                 return;
             }
 
-            ManagedEvent evt = null;
+            ManagedEvent evt;
             if (ch.TryGetValue(eventName, out evt)) {
                 evt.Invoke(args);
             }
         }
 
+        /// <summary>
+        /// Listener on the specified event from
+        /// <see cref="EventChannels.User" /> channel.
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <param name="listener"></param>
         public void OnUserEvent(
             Enum eventName,
-            UnityAction<ExtendedEventArgs> listener)
-            => this.ListenOn(EventChannels.User, eventName, listener);
+            UnityAction<ExtendedEventArgs> listener
+        ) =>
+            this.ListenOn(EventChannels.User, eventName, listener);
 
 
+        /// <summary>
+        /// Remove the specified listener from
+        /// <see cref="EventChannels.User" /> channel.
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <param name="listener"></param>
+        // ReSharper disable once UnusedMember.Global
         public void OffUserEvent(
             Enum eventName,
-            UnityAction<ExtendedEventArgs> listener)
-            => this.StopListening(EventChannels.User, eventName, listener);
+            UnityAction<ExtendedEventArgs> listener
+        ) =>
+            this.StopListening(EventChannels.User, eventName, listener);
 
 
+        /// <summary>Returns the specified event channel</summary>
+        /// <param name="channel"></param>
+        /// <param name="autoCreate"></param>
+        /// <returns></returns>
         private Dictionary<Enum, ManagedEvent> GetChannel(
             EventChannels channel,
-            bool autoCreate = true)
+            bool autoCreate = true
+        )
         {
-            Dictionary<Enum, ManagedEvent> ch = null;
+            Dictionary<Enum, ManagedEvent> ch;
             Dictionary<EventChannels, Dictionary<Enum, ManagedEvent>> dict =
                 EventManager.Mgr._events;
 

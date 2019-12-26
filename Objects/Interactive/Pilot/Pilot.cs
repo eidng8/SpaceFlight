@@ -63,7 +63,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
         /// </summary>
         protected virtual void OnSelectTarget(ExtendedEventArgs arg0)
         {
-            this.Target = arg0.Source.transform;
+            this.Target = arg0.source.transform;
         }
 
         /// <summary>Register listeners to game events.</summary>

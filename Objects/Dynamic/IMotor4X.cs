@@ -27,5 +27,10 @@ namespace eidng8.SpaceFlight.Objects.Dynamic
     {
         /// <summary>Current rotation thrust value.</summary>
         Vector3 GenerateTorque(float deltaTime);
+
+        /// <summary>Current side way thrust value.</summary>
+        /// <param name="deltaTime"></param>
+        /// <returns></returns>
+        Vector3 GeneratePanThrust(float deltaTime);
     }
 }
