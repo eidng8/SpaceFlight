@@ -25,6 +25,12 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
             AccelerationController<AccelerationAi, AccelerationAiConfig>>
     {
         /// <inheritdoc />
+        public override void Awake()
+        {
+            if (this.Config.playerShip) { base.Awake(); }
+        }
+
+        /// <inheritdoc />
         protected override void DetermineThrottle()
         {
             if (!this.HasTarget) {
