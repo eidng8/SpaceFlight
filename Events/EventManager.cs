@@ -16,12 +16,13 @@ using Object = UnityEngine.Object;
 
 namespace eidng8.SpaceFlight.Events
 {
-    public class EventManager : MonoBehaviour
+    public sealed class EventManager : MonoBehaviour
     {
         private Dictionary<EventChannels, Dictionary<Enum, ManagedEvent>>
             _events;
 
         private static EventManager _mgr;
+        private Camera _camera;
 
         /// <summary>The singleton instance of <c>EventManager</c></summary>
         public static EventManager Mgr {
@@ -45,6 +46,8 @@ namespace eidng8.SpaceFlight.Events
             }
         }
 
+
+        private void Start() { this._camera = Camera.main; }
 
         private void Init()
         {
@@ -180,6 +183,34 @@ namespace eidng8.SpaceFlight.Events
             dict.Add(channel, ch);
 
             return ch;
+        }
+
+        private void Update()
+        {
+            this.HandleMouseClick();
+        }
+
+        private void HandleMouseClick()
+        {
+            if (Input.GetMouseButtonDown(0)) {
+                if (this.CameraRaycast(out RaycastHit hit)) {
+                    var args = new ExtendedEventArgs {
+                        source = hit.transform.gameObject
+                    };
+                    this.TriggerEvent(
+                        EventChannels.User,
+                        UserEvents.Select,
+                        args
+                    );
+                }
+            }
+        }
+
+        private bool CameraRaycast(out RaycastHit hit)
+        {
+            Vector3 pos = Input.mousePosition;
+            Ray ray = this._camera.ScreenPointToRay(pos);
+            return Physics.Raycast(ray, out hit);
         }
     }
 }
