@@ -8,17 +8,25 @@
 // ---------------------------------------------------------------------------
 
 using eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai;
+using UnityEngine;
 
 
 namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
 {
     public class AccelerationAutoPilot
-        : AccelerationController<AccelerationAi, AccelerationAiConfig>
+        : AccelerationController<AccelerationAi, AccelerationAiConfig>,
+            IAutoPilot
     {
         protected override void Awake()
         {
             base.Awake();
             this.Pilot.Control = this;
+        }
+
+        /// <inheritdoc />
+        public void SetTarget(Transform target)
+        {
+            this.Pilot.Target = target;
         }
     }
 }
