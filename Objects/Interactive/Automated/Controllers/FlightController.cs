@@ -7,7 +7,6 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
 using eidng8.SpaceFlight.Objects.Dynamic;
 using eidng8.SpaceFlight.Objects.Interactive.Pilot;
 using UnityEngine;
