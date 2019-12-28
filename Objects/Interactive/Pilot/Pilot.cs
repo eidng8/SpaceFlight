@@ -41,7 +41,6 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
                 if (hasTarget) {
                     this.TargetControl =
                         this._target.GetComponent<IFlightController>();
-                    Debug.Log(this.TargetControl);
                 }
             }
         }
