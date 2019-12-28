@@ -9,6 +9,7 @@
 
 using eidng8.SpaceFlight.Events;
 using eidng8.SpaceFlight.Objects.Dynamic;
+using eidng8.SpaceFlight.Objects.Interactive.Automated;
 using UnityEngine;
 
 
@@ -20,6 +21,8 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
     {
         private bool _listeningEvents;
         private Transform _target;
+
+        protected IFlightController TargetControl;
 
         protected TConfig Config;
 
@@ -33,7 +36,13 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot
             get => this._target;
             set {
                 this._target = value;
-                this.HasTarget = null != value;
+                bool hasTarget = null != value;
+                this.HasTarget = hasTarget;
+                if (hasTarget) {
+                    this.TargetControl =
+                        this._target.GetComponent<IFlightController>();
+                    Debug.Log(this.TargetControl);
+                }
             }
         }
 

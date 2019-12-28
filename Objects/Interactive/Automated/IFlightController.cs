@@ -25,7 +25,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated
     public interface IFlightController : IObjectController
     {
         /// <summary>Returns the current velocity magnitude.</summary>
-        float Velocity { get; }
+        float Speed { get; }
+
+        /// <summary>Returns the current velocity vector.</summary>
+        Vector3 Velocity { get; }
 
         /// <summary>Calculates distance to the given target.</summary>
         /// <param name="target"></param>

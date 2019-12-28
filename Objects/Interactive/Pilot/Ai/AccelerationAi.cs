@@ -60,7 +60,23 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Pilot.Ai
         /// </summary>
         protected virtual bool ShouldBrake()
         {
-            float v = this.Control.Velocity;
+            if (!this.HasTarget) {
+                return false;
+            }
+
+            float v;
+            if (this.TargetControl != null) {
+                v = Vector3.Project(
+                               this.TargetControl.Velocity,
+                               this.Control.Velocity
+                           )
+                           .sqrMagnitude;
+                if (v > this.Control.Velocity.sqrMagnitude) {
+                    return false;
+                }
+            }
+
+            v = this.Control.Speed;
             float a = this.Motor.GetConfig().maxDeceleration;
 
             // We calculate how much time is needed for the speed to reach `v`

@@ -7,6 +7,7 @@
 // </summary>
 // ---------------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
 using eidng8.SpaceFlight.Objects.Dynamic;
 using eidng8.SpaceFlight.Objects.Interactive.Pilot;
 using UnityEngine;
@@ -65,7 +66,10 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         }
 
         /// <inheritdoc />
-        public virtual float Velocity => this.Body.velocity.magnitude;
+        public virtual float Speed => this.Body.velocity.magnitude;
+
+        /// <inheritdoc />
+        public virtual Vector3 Velocity => this.Body.velocity;
 
         /// <inheritdoc />
         public virtual float DistanceTo(Vector3 target) =>
@@ -148,7 +152,7 @@ namespace eidng8.SpaceFlight.Objects.Interactive.Automated.Controllers
         /// </returns>
         public virtual float EstimatedArrival(float distance)
         {
-            float v = this.Velocity;
+            float v = this.Speed;
             float a = this.Motor.Acceleration;
 
             //                         __________
